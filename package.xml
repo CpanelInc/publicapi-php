@@ -17,7 +17,7 @@
   <active>yes</active>
  </contributor>
  <date>2011-04-03</date>
- <time>18:13:16</time>
+ <time>18:53:09</time>
  <version>
   <release>0.1.0</release>
   <api>0.1.0</api>
@@ -82,13 +82,13 @@ Initial BETA release
    <file baseinstalldir="/" md5sum="a5b1235b69bbd53ab9ccf0ec38443982" name="Cpanel/Tests/Cpanel/Service/Adapter/LiveapiTest.php" role="php" />
    <file baseinstalldir="/" md5sum="f58dc9384544b73a73c9f82dc510a9fb" name="Cpanel/Tests/Cpanel/Service/Adapter/WHMapiTest.php" role="php" />
    <file baseinstalldir="/" md5sum="957448f979f416d58b652e2eda742969" name="Cpanel/Util/Autoload.php" role="php" />
-   <file baseinstalldir="/" md5sum="2591e07a0b07f7e4dac25600cf334a63" name="README.markdown" role="data" />
+   <file baseinstalldir="/" md5sum="f2f18f1d6b3c6d7f6ffc787c1c0a7b0d" name="README.markdown" role="data" />
   </dir>
  </contents>
  <dependencies>
   <required>
    <php>
-    <min>5.2.1</min>
+    <min>5.2</min>
    </php>
    <pearinstaller>
     <min>1.4.0</min>
