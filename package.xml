@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.8.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0     http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.0     http://pear.php.net/dtd/package-2.0.xsd">
+ <name>Cpanel</name>
+ <channel>cpanelinc.github.com/pear</channel>
+ <summary>cPanel PHP library</summary>
+ <description>cPanel&apos;s PHP library for programming against various remote and local cPanel APIs</description>
+ <lead>
+  <name>David Neimeyer</name>
+  <user>davidneimeyer</user>
+  <email>davidneimeyer@cpanel.net</email>
+  <active>yes</active>
+ </lead>
+ <contributor>
+  <name>Matt Dees</name>
+  <user>MattDees</user>
+  <email>matt@cpanel.net</email>
+  <active>yes</active>
+ </contributor>
+ <date>2011-04-03</date>
+ <time>18:13:16</time>
+ <version>
+  <release>0.1.0</release>
+  <api>0.1.0</api>
+ </version>
+ <stability>
+  <release>beta</release>
+  <api>beta</api>
+ </stability>
+ <license uri="http://sdk.cpanel.net/license/bsd.html">BSD Style</license>
+ <notes>
+Initial BETA release
+ </notes>
+ <contents>
+  <dir baseinstalldir="/" name="/">
+   <file baseinstalldir="/" md5sum="196600a243af29da605e6ba9b21e4e4a" name="Cpanel/PublicAPI.php" role="php" />
+   <file baseinstalldir="/" md5sum="88483fa868c4321a14f5cfe3e0f9a49b" name="Cpanel/Core/Object.php" role="php" />
+   <file baseinstalldir="/" md5sum="5fd79f0eed2098bd10540462d849b3a9" name="Cpanel/Core/PriorityQueue.php" role="php" />
+   <file baseinstalldir="/" md5sum="f302691c17c863302a9266ab6d8c55e5" name="Cpanel/Examples/Accessing_Response_Data.php" role="php" />
+   <file baseinstalldir="/" md5sum="58a9ff6312976878cb3bf55d6a13b38a" name="Cpanel/Examples/Basic_cPanel_Service.php" role="php" />
+   <file baseinstalldir="/" md5sum="50b76668a7a86b3d80f56ce7a0708685" name="Cpanel/Examples/Basic_WHM_Service.php" role="php" />
+   <file baseinstalldir="/" md5sum="99a129b3ed9c03d784692c918a1a0e52" name="Cpanel/Examples/Introduction_to_PublicAPI.php" role="php" />
+   <file baseinstalldir="/" md5sum="5bab319c8644e855f82c6e9217284e63" name="Cpanel/Examples/PublicAPI_and_Service_Configuration.php" role="php" />
+   <file baseinstalldir="/" md5sum="8678624f995c020c76731aad14c30503" name="Cpanel/Examples/PublicAPI_DirectURL.php" role="php" />
+   <file baseinstalldir="/" md5sum="a41021afede5226f1411c7e0e0de3f29" name="Cpanel/Examples/Using_the_LivePHP_Service.php" role="php" />
+   <file baseinstalldir="/" md5sum="2593235729644dbfe914302573238142" name="Cpanel/Listner/Observer/GenericLogger.php" role="php" />
+   <file baseinstalldir="/" md5sum="237c9b911811103660c276e86cdc425d" name="Cpanel/Listner/Subject/Abstract.php" role="php" />
+   <file baseinstalldir="/" md5sum="b3ee3d6fd3a2fbf1c505cbc39c062636" name="Cpanel/Listner/Subject/Logger.php" role="php" />
+   <file baseinstalldir="/" md5sum="918a87ddfe427cee9394194f4f54cfd0" name="Cpanel/Parser/Interface.php" role="php" />
+   <file baseinstalldir="/" md5sum="1e0c883d30479e75f02862731d3938a2" name="Cpanel/Parser/JSON.php" role="php" />
+   <file baseinstalldir="/" md5sum="e606326b42761b216d950fcf05aa8e8c" name="Cpanel/Parser/LiveJSON.php" role="php" />
+   <file baseinstalldir="/" md5sum="94ef4bf4b24d5ff8be609461b791702d" name="Cpanel/Parser/XML.php" role="php" />
+   <file baseinstalldir="/" md5sum="94f4fdb4986384716cb1f15d54a9fee7" name="Cpanel/Query/Interface.php" role="php" />
+   <file baseinstalldir="/" md5sum="4cc95b91b36e86945336af021e14353d" name="Cpanel/Query/Object.php" role="php" />
+   <file baseinstalldir="/" md5sum="ed04d7fef7cda23b00be437597ed4d99" name="Cpanel/Query/Http/Abstract.php" role="php" />
+   <file baseinstalldir="/" md5sum="241ff437adc712eccab546bb7a3cb3c9" name="Cpanel/Query/Http/Interface.php" role="php" />
+   <file baseinstalldir="/" md5sum="6be0e294b18ad4d2955169e417743fdb" name="Cpanel/Query/Live/Abstract.php" role="php" />
+   <file baseinstalldir="/" md5sum="149faf7562af69cafa685d1eb09edb02" name="Cpanel/Query/Live/Interface.php" role="php" />
+   <file baseinstalldir="/" md5sum="54973a8056f9d7039900d22d4962d226" name="Cpanel/Service/Abstract.php" role="php" />
+   <file baseinstalldir="/" md5sum="e1b8784d443a6d978d0c3b95637dc771" name="Cpanel/Service/cPanel.php" role="php" />
+   <file baseinstalldir="/" md5sum="79765a1542fe9170a88f25e8aaafc0a4" name="Cpanel/Service/WHM.php" role="php" />
+   <file baseinstalldir="/" md5sum="73fe8bb52b23e44331a2fbc9613c03e6" name="Cpanel/Service/XmlapiClientClass.php" role="php" />
+   <file baseinstalldir="/" md5sum="201b38058c25273096584309841bc19a" name="Cpanel/Service/Adapter/Cpanelapi.php" role="php" />
+   <file baseinstalldir="/" md5sum="3d7a0567b697030879f0084e95101be7" name="Cpanel/Service/Adapter/Liveapi.php" role="php" />
+   <file baseinstalldir="/" md5sum="655491e5783a78387328aaddcaec7fe1" name="Cpanel/Service/Adapter/WHMapi.php" role="php" />
+   <file baseinstalldir="/" md5sum="dfb79077c7de9f7157ebdc21b30dafb7" name="Cpanel/Tests/MockSocketServer.php" role="php" />
+   <file baseinstalldir="/" md5sum="6053d77e9ee8c281a71d2675c95974b6" name="Cpanel/Tests/startMockSocketServer.php" role="php" />
+   <file baseinstalldir="/" md5sum="baaee9a33ec2d093ee3fa4a0bb700078" name="Cpanel/Tests/TestHelper.php" role="php" />
+   <file baseinstalldir="/" md5sum="2e911ee24b2a8df75f4d30f1084d56f1" name="Cpanel/Tests/Cpanel/PublicAPITest.php" role="php" />
+   <file baseinstalldir="/" md5sum="d5378cfec1e08fbee09a186e77eaea63" name="Cpanel/Tests/Cpanel/Core/AbstractTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="3190af353e6282a358c754b9186d238b" name="Cpanel/Tests/Cpanel/Core/ObjectTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="d76d81a5a139f53181d5ea39a92b56ae" name="Cpanel/Tests/Cpanel/Core/PriorityQueueTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="26ed6f766dd5367552e83f23a54ac78e" name="Cpanel/Tests/Cpanel/Listner/Subject/LoggerTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="4eb55a9ddfeff198722a5da01610f044" name="Cpanel/Tests/Cpanel/Parser/JSONTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="1cd7582aafbd97b39570b262fcbea4f5" name="Cpanel/Tests/Cpanel/Parser/LiveJSONTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="6c100841951e3c44197db7b920cb6484" name="Cpanel/Tests/Cpanel/Parser/XMLTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="f540d64643bc69d2b5b07b95291dd169" name="Cpanel/Tests/Cpanel/Query/ObjectTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="fdb50886fb0fa26c301adceff4ec17a9" name="Cpanel/Tests/Cpanel/Query/Http/AbstractTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="4eabc4a59b1b42bc88fb99f335ed0970" name="Cpanel/Tests/Cpanel/Query/Live/AbstractTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="f86fec87d852b58ccff2864bae6b88d8" name="Cpanel/Tests/Cpanel/Service/cPanelTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="9e257c05c48acb00cbc66cdfb857a7ad" name="Cpanel/Tests/Cpanel/Service/WHMTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="7e394ebef4625a8f270ddaa86dbb05e0" name="Cpanel/Tests/Cpanel/Service/Adapter/CpanelapiTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="a5b1235b69bbd53ab9ccf0ec38443982" name="Cpanel/Tests/Cpanel/Service/Adapter/LiveapiTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="f58dc9384544b73a73c9f82dc510a9fb" name="Cpanel/Tests/Cpanel/Service/Adapter/WHMapiTest.php" role="php" />
+   <file baseinstalldir="/" md5sum="957448f979f416d58b652e2eda742969" name="Cpanel/Util/Autoload.php" role="php" />
+   <file baseinstalldir="/" md5sum="2591e07a0b07f7e4dac25600cf334a63" name="README.markdown" role="data" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.2.1</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>0.1.0</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2011-04-03</date>
+   <license uri="http://sdk.cpanel.net/license/bsd.html">BSD Style</license>
+   <notes>
+Initial BETA release
+   </notes>
+  </release>
+ </changelog>
+</package>
