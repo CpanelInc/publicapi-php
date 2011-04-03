@@ -21,7 +21,7 @@ This quick start example illustrates:
 1. Getting the version string from the response object
 
 Code:
-    \n    <?php
+    <?php
     
         // Include the autoloader
         require_once realpath( dirname(__FILE__) . '/Util/Autoload.php');
@@ -46,7 +46,7 @@ Code:
         $response = $cp->whm_api('version');
         
         // Print result string
-        echo "WHM Version: {$response->version}\\n";
+        echo "WHM Version: {$response->version}\n";
         
     ?>
 
