@@ -1,0 +1,22 @@
+{
+    "name": "cpanel/publicapi",
+    "type": "library",
+    "description": "cPanel PublicAPI PHP client and cPanel PHP library",
+    "keywords": ["cpanel", "api", "whm"],
+    "homepage": "http://sdk.cpanel.net",
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Cpanel publicapi-php Contributors",
+            "homepage": "https://github.com/CpanelInc/publicapi-php/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.2"
+    },
+    "autoload": {
+        "classmap": [
+            "Cpanel/"
+        ]
+    }
+}
