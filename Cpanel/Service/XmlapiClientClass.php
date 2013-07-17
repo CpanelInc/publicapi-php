@@ -957,7 +957,7 @@ abstract class Cpanel_Service_XmlapiClientClass extends Cpanel_Query_Http_Abstra
         if (!isset($reseller_cfg['user'])) {
             throw new Exception("setresellerlimits requires that a user is defined in the array passed to it");
         }
-        return $this->makeQuery('setresellerips', $reseller_cfg);
+        return $this->makeQuery('setresellerlimits', $reseller_cfg);
     }
     /**
     * Set a reseller's main IP
