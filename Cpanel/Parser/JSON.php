@@ -133,6 +133,9 @@ class Cpanel_Parser_JSON extends Cpanel_Core_Object
             return $this->getParserInternalErrors(
                 self::ERROR_DECODE, 'Cannot decode empty string.'
             );
+        }        
+        if (function_exists('iconv')) {
+            $str = iconv('UTF-8', 'UTF-8//IGNORE', utf8_encode($str));
         }
         $r = json_decode($str, true);
         if (is_null($r)) {

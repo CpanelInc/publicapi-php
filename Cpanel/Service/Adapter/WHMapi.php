@@ -69,22 +69,23 @@ class Cpanel_Service_Adapter_WHMapi extends Cpanel_Service_XmlapiClientClass
     );
     /**
      * Constructor
-     * 
+     *
      * Prepare the adapter for use by Service.
-     * 
+     *
      * If $RFT is not passed the const Cpanel_Service_Adapter_WHMapi::DRFT will be
-     * used when invoking {@link setAdapterResponseFormatType()} at 
+     * used when invoking {@link setAdapterResponseFormatType()} at
      * instantiation
-     * 
+     *
      * HTTP port is set to '2087' by default.  {@link setPort()}
-     * 
+     *
      * NOTE: this constructor as support for the legacy PHP XML-API client class
-     * 
+     *
      * @param string $host     Host address for query call
      * @param string $user     User to authenticate query call
      * @param string $password Password to authenticate query call
      * @param string $RFT      Response format type
-     * 
+     *
+     * @throws Exception in case of no valid stread wrapper is found
      * @return Cpanel_Service_Adapter_WHMapi
      */
     public function __construct($host = null, $user = null, $password = null, $RFT = null)
@@ -99,16 +100,28 @@ class Cpanel_Service_Adapter_WHMapi extends Cpanel_Service_XmlapiClientClass
         if ($password) {
             $this->setPassword($password);
         }
-        $this->setPort('2087');
+
+        // @codeCoverageIgnoreStart
+        $registeredStreams = stream_get_wrappers();
+        if (in_array('https', $registeredStreams)) {
+            $port = 2087;
+        } elseif (in_array('http', $registeredStreams)) {
+            $port = 2086;
+        } else {
+            throw new Exception('No valid stream wrapper registered');
+        }
+        // @codeCoverageIgnoreEnd
+
+        $this->setPort($port);
         $RFT = ($RFT) ? $RFT : self::DRFT;
         $this->setAdapterResponseFormatType($RFT);
         return $this;
     }
     /**
      * Return the current response format type
-     * 
+     *
      * @see Cpanel_Query_Http_Abstract::getAdapterResponseFormatType()
-     * 
+     *
      * @return string
      */
     public function getAdapterResponseFormatType()
@@ -117,11 +130,11 @@ class Cpanel_Service_Adapter_WHMapi extends Cpanel_Service_XmlapiClientClass
     }
     /**
      * Set the response format type
-     * 
+     *
      * @param string $type The response format type to set
-     * 
+     *
      * @see    Cpanel_Query_Http_Abstract::setAdapterResponseFormatType()
-     * 
+     *
      * @return Cpanel_Service_Adapter_Cpanelapi
      * @throws Exception If an invalid RFT
      */
@@ -135,13 +148,13 @@ class Cpanel_Service_Adapter_WHMapi extends Cpanel_Service_XmlapiClientClass
     }
     /**
      * Method for querying a native XML-API function
-     * 
+     *
      * @param string $function XML-API function to invoke
      * @param array  $args     Arguments for $function
-     * 
+     *
      * @see    Cpanel_Query_Http_Abstract::xmlapi_query()
      * @link   http://docs.cpanel.net/twiki/bin/vief/AllDocumentation/AutomationIntegration/XmlApi#Functions XML-API Funcitons
-     * 
+     *
      * @return Cpanel_Query_Object
      */
     public function xmlapi_query($function, $args = array())
@@ -150,16 +163,16 @@ class Cpanel_Service_Adapter_WHMapi extends Cpanel_Service_XmlapiClientClass
     }
     /**
      * Method for querying API1 via XML-API
-     * 
+     *
      * @param string $user   User to query against
      * @param string $module API1 module to source
      * @param string $func   API1 function of $module to invoke
      * @param array  $args   Arguments for $function
-     * 
+     *
      * @link   http://docs.cpanel.net/twiki/bin/view/AllDocumentation/AutomationIntegration/CallingAPIFunctions Calling API Functions
      * @link   http://docs.cpanel.net/twiki/bin/view/ApiDocs/Api1/WebHome API1 Modules
      * @see    Cpanel_Query_Http_Abstract::api1_query()
-     * 
+     *
      * @return Cpanel_Query_Object
      * @throws Exception If $user, $module, or $func are not defined
      * @throws Exception If $args is not an array
@@ -199,16 +212,16 @@ class Cpanel_Service_Adapter_WHMapi extends Cpanel_Service_XmlapiClientClass
     }
     /**
      * Method for querying API2 via XML-API
-     * 
+     *
      * @param string $user   User to query against
      * @param string $module API2 module to source
      * @param string $func   API2 function of $module to invoke
      * @param array  $args   Arguments for $function
-     * 
+     *
      * @link   http://docs.cpanel.net/twiki/bin/view/AllDocumentation/AutomationIntegration/CallingAPIFunctions Calling API Functions
      * @link   http://docs.cpanel.net/twiki/bin/view/ApiDocs/Api2/WebHome API2 Modules
      * @see    Cpanel_Query_Http_Abstract::api2_query()
-     * 
+     *
      * @return Cpanel_Query_Object
      * @throws Exception If $user, $module, or $func are not defined
      * @throws Exception If $args is not an array
