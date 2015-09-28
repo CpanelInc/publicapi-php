@@ -76,7 +76,7 @@ class Cpanel_PublicAPI extends Cpanel_Core_Object
      * The class is a Singleton.  The constructor, however is public due to
      * inheritance from Cpanel_Core_Object.
      * 
-     * @param arrays $optsArray Option configuration data
+     * @param array $optsArray Option configuration data
      * 
      * @return Cpanel_PublicAPI  
      * @throws Exception If      instantiated directly. {@link getInstance()}
