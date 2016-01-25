@@ -135,9 +135,6 @@ class Cpanel_Parser_JSON extends Cpanel_Core_Object
             );
         }
 
-        /**
-         * @see https://trac.spamexperts.com/ticket/18188
-         */
         if (function_exists('iconv')) {
             $str = iconv('UTF-8', 'UTF-8//IGNORE', utf8_encode($str));
         }
