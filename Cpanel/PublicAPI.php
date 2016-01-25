@@ -54,6 +54,7 @@
  * @version   0.1.0
  * @link      http://sdk.cpanel.net
  * @since     0.1.0
+ *
  */
 class Cpanel_PublicAPI extends Cpanel_Core_Object
 {

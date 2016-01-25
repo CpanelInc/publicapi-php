@@ -1,5 +1,4 @@
 <?php
-require_once 'PHPUnit/Autoload.php';
 /**
  * Basic test case for the Cpanel_Core_Object class
  * @author davidneimeyer

@@ -1,4 +1,5 @@
 <?php
+require 'Cpanel/Util/Autoload.php';
 /**
  * @covers Cpanel_Parser_JSON
  * @author davidneimeyer

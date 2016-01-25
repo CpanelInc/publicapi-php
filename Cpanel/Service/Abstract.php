@@ -515,7 +515,8 @@ abstract class Cpanel_Service_Abstract extends Cpanel_Core_Object
             );
         }
         ksort($arr);
-        $fkey = array_shift(array_keys($arr));
+        $arrKeys = array_keys($arr);
+        $fkey = array_shift($arrKeys);
         if (is_int($fkey)) {
             return self::API1ARGS;
         }

@@ -606,12 +606,10 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
             return 'Authorization: WHM '
                   . $this->user
                   . ':'
-                  . $this->auth
-                  . "\r\n";
+                  . $this->auth;
         } elseif ($this->auth_type == 'pass') {
             return 'Authorization: Basic '
-                 . base64_encode($this->user . ':' . $this->auth)
-                 . "\r\n";
+                 . base64_encode($this->user . ':' . $this->auth);
         } else {
             THROW new Exception('invalid auth_type set');
         }
@@ -748,6 +746,7 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
         curl_setopt($curl, CURLOPT_BUFFERSIZE, 131072);
         // Pass authentication header
         $curlHeader = $this->buildCurlHeaders($curl, $rObj);
+
         $url = $rObj->query->url;
         // Set the URL
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -760,7 +759,9 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
                 . "\tAUTH: {$rObj->query->authstr}\n"
             );
         }
+
         $result = $this->curlExec($curl);
+
         curl_close($curl);
         return $result;
     }
@@ -782,6 +783,7 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
             throw new Exception('Invalid cURL resource');
         }
         $result = curl_exec($curl);
+
         if ($result === false) {
             $msg = 'curl_exec threw error "' . curl_error($curl) . '"';
             $rObj = $this->getResponseObject();
@@ -801,21 +803,20 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
      * Update cURL resource POST field data and return a header string
      * 
      * @param resource $curl      cURL resource to update
-     * @param string   $headerStr Previous built header string
      * @param string   $postdata  URL query parameter string to append to header
      *  string
      * 
      * @return string    Appended header string
      * @throws Exception If $curl is not a resource
      */
-    protected function addCurlPostFields($curl, $headerStr, $postdata)
+    protected function addCurlPostFields($curl, $postdata)
     {
         if (!is_resource($curl)) {
             throw new Exception('Invalid cURL resource');
         }
+
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $postdata);
-        return $headerStr . "\r\n" . $postdata;;
     }
     /**
      * Build a cURL header array, updating cURL POST field data as necessasry
@@ -847,20 +848,23 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
             $customHeaders = $h->getAllDataRecursively();
             $headers = $customHeaders + $headers;
         }
+
+        $curlHeader[0] = $authstr;
+
         foreach ($headers as $key => $value) {
-            $headerStrs[] = "{$key}: {$value}";
+            $curlHeader[] = "{$key}: {$value}";
         }
-        $curlHeader[0] = $authstr . implode("\r\n", $headerStrs);
+
         $qt = $queryObj->httpQueryType;
         if ($qt && strtoupper($qt) == 'GET') {
             $queryObj->url = "{$queryObj->url}?{$postdata}";
         } else {
-            $curlHeader[0] = $this->addCurlPostFields(
+            $this->addCurlPostFields(
                 $curl,
-                $curlHeader[0],
                 $postdata
             );
         }
+
         return $curlHeader;
     }
     /**
