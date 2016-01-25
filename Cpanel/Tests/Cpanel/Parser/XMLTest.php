@@ -473,7 +473,8 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
         );
         $rObj = $this->getRObj();
         $rObj->setResponse($data);
-        $r = $p->encodeQueryObject($rObj);
+
+        $r = $p->encodeQueryObject(serialize($rObj));
     }
     public function testEncodeQueryObjectCallsGetResponseAndEncodes()
     {
@@ -483,7 +484,9 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
         ));
         $rObj->expects($this->once())->method('getResponse')->with('array')->will($this->returnValue($this->getArrayListPopsWithDisk()));
         $expected = $this->getXMLListPopsWithDisk();
+
         $actual = $p->encodeQueryObject($rObj);
+
         $this->assertEquals($expected, $actual);
     }
     public function testEncodeQueryObjectCallsGetResponseAndEncodesSmall()
@@ -682,7 +685,7 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
   <apiversion>2</apiversion>
   <data>
     <_diskquota>262144000</_diskquota>
-    <_diskused></_diskused>
+    <_diskused/>
     <diskquota>250</diskquota>
     <txtdiskquota>250</txtdiskquota>
     <user>auththis</user>

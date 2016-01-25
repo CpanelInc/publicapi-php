@@ -67,24 +67,26 @@ class Cpanel_Service_Adapter_WHMapi extends Cpanel_Service_XmlapiClientClass
         'JSON',
         'XML'
     );
+
     /**
      * Constructor
-     * 
+     *
      * Prepare the adapter for use by Service.
-     * 
+     *
      * If $RFT is not passed the const Cpanel_Service_Adapter_WHMapi::DRFT will be
-     * used when invoking {@link setAdapterResponseFormatType()} at 
+     * used when invoking {@link setAdapterResponseFormatType()} at
      * instantiation
-     * 
+     *
      * HTTP port is set to '2087' by default.  {@link setPort()}
-     * 
+     *
      * NOTE: this constructor as support for the legacy PHP XML-API client class
-     * 
+     *
      * @param string $host     Host address for query call
      * @param string $user     User to authenticate query call
      * @param string $password Password to authenticate query call
      * @param string $RFT      Response format type
-     * 
+     *
+     * @throws Exception in case of no valid stread wrapper is found
      * @return Cpanel_Service_Adapter_WHMapi
      */
     public function __construct($host = null, $user = null, $password = null, $RFT = null)
@@ -99,7 +101,19 @@ class Cpanel_Service_Adapter_WHMapi extends Cpanel_Service_XmlapiClientClass
         if ($password) {
             $this->setPassword($password);
         }
-        $this->setPort('2087');
+
+        // @codeCoverageIgnoreStart
+        $registeredStreams = stream_get_wrappers();
+        if (in_array('https', $registeredStreams)) {
+            $port = 2087;
+        } elseif (in_array('http', $registeredStreams)) {
+            $port = 2086;
+        } else {
+            throw new Exception('No valid protocol stream wrapper registered');
+        }
+        // @codeCoverageIgnoreEnd
+
+        $this->setPort($port);
         $RFT = ($RFT) ? $RFT : self::DRFT;
         $this->setAdapterResponseFormatType($RFT);
         return $this;

@@ -134,6 +134,14 @@ class Cpanel_Parser_JSON extends Cpanel_Core_Object
                 self::ERROR_DECODE, 'Cannot decode empty string.'
             );
         }
+
+        /**
+         * @see https://trac.spamexperts.com/ticket/18188
+         */
+        if (function_exists('iconv')) {
+            $str = iconv('UTF-8', 'UTF-8//IGNORE', utf8_encode($str));
+        }
+
         $r = json_decode($str, true);
         if (is_null($r)) {
             $this->_hasParseError = true;

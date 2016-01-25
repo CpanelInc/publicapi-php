@@ -31,10 +31,11 @@ class Cpanel_Tests_MockSocketServer
         $this->log("Start accepting connections: " . $this->socketfile . "\n");
         $tmpsocket = socket_accept($this->_socket);
         if ($tmpsocket === false) {
-            return $this->throwSocketError($socket, "Socket accept failed");
+            return $this->throwSocketError($this->socket, "Socket accept failed");
         }
         $this->log("Accepting connections.\n");
         $this->_tmpsocket = $tmpsocket;
+
         // Wait for data on wire
         while (true) {
             // Sit on read until we get a newline, anything before that should be a char length
@@ -90,6 +91,7 @@ class Cpanel_Tests_MockSocketServer
     {
         //open socket
         $socket = socket_create(AF_UNIX, SOCK_STREAM, 0);
+
         if (!$socket) {
             return $this->throwSocketError($socket, "Socket could not be created");
         }

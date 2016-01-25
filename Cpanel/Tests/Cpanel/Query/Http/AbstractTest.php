@@ -977,7 +977,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rprop = new ReflectionProperty($this->cut, 'user');
         $rprop->setAccessible(true);
         $rprop->setValue($rq, $user);
-        $expected = "Authorization: WHM ${user}:${auth}\r\n";
+        $expected = "Authorization: WHM ${user}:${auth}";
         $actual = $rq->buildAuthStr();
         $this->assertEquals($expected, $actual);
     }
@@ -996,7 +996,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rprop = new ReflectionProperty($this->cut, 'user');
         $rprop->setAccessible(true);
         $rprop->setValue($rq, $user);
-        $expected = "Authorization: Basic " . base64_encode($user . ':' . $auth) . "\r\n";
+        $expected = "Authorization: Basic " . base64_encode($user . ':' . $auth);
         $actual = $rq->buildAuthStr();
         $this->assertEquals($expected, $actual);
     }
@@ -1310,12 +1310,12 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $params = $rmeth->getParameters();
         $expected = array(
             0 => 'curl',
-            1 => 'headerStr',
-            2 => 'postdata'
+            1 => 'postdata'
         );
         foreach ($params as $param) {
             $actual[$param->getPosition() ] = $param->getName();
         }
+
         $this->assertEquals($expected, $actual);
     }
     /**
@@ -1333,8 +1333,9 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq = $this->getRQ();
         $rmeth = new ReflectionMethod($this->cut, 'addCurlPostFields');
         $rmeth->setAccessible(true);
-        $actual = $rmeth->invoke($rq, curl_init(), '', 'what=ever');
-        $this->assertInternalType('string', $actual);
+        $actual = $rmeth->invoke($rq, curl_init(), 'what=ever');
+
+        $this->assertInternalType('null', $actual);
     }
     /**
      * @expectedException Exception
@@ -1403,15 +1404,13 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $actual = $rmeth->invoke($rq, $curl, $rObj);
         $this->assertEquals($url, $rObj->query->url);
     }
-    /**
-     * @depends testAddCurlPostFieldsReturnsString
-     */
+
     public function testBuildCurlHeadersCallsAddCurlPostFields()
     {
         $user = 'foo';
         $pass = 'bar';
         $postdata = 'what=ever';
-        $authstr = 'Authentication: Basic ' . base64_encode($user . ':' . $pass) . "\r\n";
+        $authstr = 'Authentication: Basic ' . base64_encode($user . ':' . $pass);
         $customHeaders = array(
             'CustomHeader' => 'CustomHeaderValue'
         );
@@ -1421,7 +1420,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq = $this->getRQ(array(
             'addCurlPostFields'
         ));
-        $rq->expects($this->once())->method('addCurlPostFields')->with($curl, $this->anything(), $postdata)->will($this->returnValue($this->anything()));
+
         $rObj = $this->getRObj();
         //        $rObj->setQuery($customHeaders);
         $rObj->query->authstr = $authstr;
@@ -1438,7 +1437,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $user = 'foo';
         $pass = 'bar';
         $postdata = 'what=ever';
-        $authstr = 'Authentication: Basic ' . base64_encode($user . ':' . $pass) . "\r\n";
+        $authstr = 'Authentication: Basic ' . base64_encode($user . ':' . $pass);
         $customHeaders = array(
             'CustomHeader' => 'CustomHeaderValue'
         );
@@ -1454,7 +1453,8 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rmeth = new ReflectionMethod($this->cut, 'buildCurlHeaders');
         $rmeth->setAccessible(true);
         $actual = $rmeth->invoke($rq, $curl, $rObj);
-        $containsHeaders = (bool)strpos($actual[0], 'CustomHeader: CustomHeaderValue');
+
+        $containsHeaders = ($actual[1] == 'CustomHeader: CustomHeaderValue');
         $this->assertTrue($containsHeaders);
     }
     public function testBuildCurlHeadersAltersURLForGET()

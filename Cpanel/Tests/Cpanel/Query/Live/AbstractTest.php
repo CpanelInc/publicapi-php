@@ -99,7 +99,10 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         if (!file_exists($mockserverscript)) {
             self::fail("Mock socket server script '$mockserverscript' does not exist");
         }
-        $cmd = "/usr/bin/php -f $mockserverscript";
+
+        $phpPath = exec('which php');
+        $cmd = "$phpPath -f $mockserverscript"; //original
+
         $arg = "socketfile={$socketfile}";
         $full_cmd = "nohup $cmd $arg > /dev/null 2>&1 & echo $!"; // > /dev/null
         $PID = exec($full_cmd);
@@ -369,7 +372,7 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
      * looks like this test passed due to warn by fsockopen, and not the scripted
      * exception throw
      * @todo              consider reworking or removing; might be untestable
-     * @expectedException Exception
+     * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testOpenCpanelHandleThrowsOnBadfsockopen()
     {

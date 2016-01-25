@@ -54,6 +54,10 @@
  * @version   0.1.0
  * @link      http://sdk.cpanel.net
  * @since     0.1.0
+ *
+ * @method Cpanel_Query_Http_Abstract|Cpanel_Service_XmlapiClientClass whm_api
+ * @method Cpanel_Query_Http_Abstract|Cpanel_Service_XmlapiClientClass getWhm
+ * @method mixed addzonerecord
  */
 class Cpanel_PublicAPI extends Cpanel_Core_Object
 {
