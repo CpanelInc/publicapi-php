@@ -21,8 +21,8 @@ This quick start example illustrates:
 1. Getting the version string from the response object
 
 Code:
-    <?php
-    
+
+        <?php    
         // Include the autoloader
         require_once realpath( dirname(__FILE__) . '/Util/Autoload.php');
         
