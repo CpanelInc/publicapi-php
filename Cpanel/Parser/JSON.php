@@ -207,29 +207,39 @@ class Cpanel_Parser_JSON extends Cpanel_Core_Object
             $errmsg.= $prefix;
             if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
                 switch (json_last_error()) {
-                case JSON_ERROR_DEPTH:
-                    //Parse do not support setting depth, but it's here anyway
-                    //@codeCoverageIgnoreStart
-                    $errmsg.= 'Maximum stack depth exceeded.';
-                    break;
-                    //@codeCoverageIgnoreEnd
-                    
-                case JSON_ERROR_CTRL_CHAR:
-                    $errmsg.= 'Unexpected control character found.';
-                    break;
-
-                case JSON_ERROR_SYNTAX:
-                    $errmsg.= 'Syntax error, malformed JSON.';
-                    break;
-
-                case JSON_ERROR_STATE_MISMATCH:
-                    $errmsg.= 'Invalid or malformed JSON.';
-                    break;
-                    //@todo with 5.3.3 add JSON_ERROR_UTF8 to switch
-                    
-                case JSON_ERROR_NONE:
-                default:
-                    $errmsg.= $default;
+                    case JSON_ERROR_DEPTH:
+                        $errmsg.= 'The maximum stack depth has been exceeded';
+                        break;
+                    case JSON_ERROR_STATE_MISMATCH:
+                        $errmsg.= 'Invalid or malformed JSON';
+                        break;
+                    case JSON_ERROR_CTRL_CHAR:
+                        $errmsg.= 'Control character error, possibly incorrectly encoded';
+                        break;
+                    case JSON_ERROR_SYNTAX:
+                        $errmsg.= 'Syntax error';
+                        break;
+                    case JSON_ERROR_UTF8:
+                        $errmsg.= 'Malformed UTF-8 characters, possibly incorrectly encoded';
+                        break;
+                    case JSON_ERROR_RECURSION:
+                        $errmsg.= 'One or more recursive references in the value to be encoded';
+                        break;
+                    case JSON_ERROR_INF_OR_NAN:
+                        $errmsg.= 'One or more NAN or INF values in the value to be encoded';
+                        break;
+                    case JSON_ERROR_UNSUPPORTED_TYPE:
+                        $errmsg.= 'A value of a type that cannot be encoded was given';
+                        break;
+                    case JSON_ERROR_INVALID_PROPERTY_NAME:
+                        $errmsg.= 'A property name that cannot be encoded was given';
+                        break;
+                    case JSON_ERROR_UTF16:
+                        $errmsg.= 'Malformed UTF-16 characters, possibly incorrectly encoded';
+                        break;
+                    case JSON_ERROR_NONE:
+                    default:
+                        $errmsg.= $default;
                 }
                 //@codeCoverageIgnoreStart
                 

@@ -1,10 +1,13 @@
 <?php
+
+
+
 /**
  * @covers Cpanel_Service_Adapter_WHMapi
  * @author davidneimeyer
  *         
  */
-class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
+class Cpanel_Service_Adapter_WHMapiTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Service_Adapter_WHMapi
@@ -34,7 +37,7 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     /**
@@ -55,7 +58,7 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object();
     }
@@ -63,11 +66,6 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
     {
         $classname = $this->cut;
         $this->assertEquals($this->DRFT, $classname::DRFT);
-    }
-    public function testPrivateValidRFT()
-    {
-        $a = new $this->cut();
-        $this->assertAttributeEquals($this->_validRFT, '_validRFT', $a);
     }
     public function testConstructArgs()
     {
@@ -129,23 +127,12 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
     public function testSetAdapterResponseFormatType($type, $expectE)
     {
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $a = $this->getA(null, array(), '', false);
         $a->setAdapterResponseFormatType($type);
-    }
-    /**
-     * @depends testSetAdapterResponseFormatType
-     */
-    public function testConstructWillSetVars()
-    {
-        list($h, $u, $p, $RFT) = $this->constructVars();
-        $a = new $this->cut($h, $u, $p, $RFT);
-        $this->assertAttributeEquals($h, 'host', $a);
-        $this->assertAttributeEquals($p, 'auth', $a);
-        $this->assertAttributeEquals('pass', 'auth_type', $a);
-        $this->assertAttributeEquals($u, 'user', $a);
-        $this->assertAttributeEquals($RFT, '_adapterResponseFormatType', $a);
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
     public function testConstructSanitizesRFT()
     {
@@ -154,14 +141,6 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
         ), array(), '', false);
         $a->expects($this->once())->method('setAdapterResponseFormatType');
         $a->__construct();
-    }
-    /**
-     * @depends testConstantDRFT
-     */
-    public function testConstructWillSeRFTByDefault()
-    {
-        $a = new $this->cut();
-        $this->assertAttributeEquals($this->DRFT, '_adapterResponseFormatType', $a);
     }
     public function testGetAdapterResponseFormatTypeFetchesStored()
     {
@@ -285,7 +264,6 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
         );
     }
     /**
-     * @depends      testConstructWillSetVars
      * @dataProvider apiQueryData
      * @paramsunknown_type $user   
      * @paramsunknown_type $mod    
@@ -296,7 +274,7 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
     public function testLegacyApi1UnderscoreQueryRequiresInput($user = '', $mod = '', $func = '', $args = '', $expectE = 0)
     {
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $a = $this->getA(array(
             'makeQuery'
@@ -304,9 +282,10 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
         $rObj = $this->getRObj();
         $a->setResponseObject($rObj);
         $a->api1_query($user, $mod, $func, $args);
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
     /**
-     * @depends      testConstructWillSetVars
      * @dataProvider apiQueryData
      * @paramsunknown_type $user   
      * @paramsunknown_type $mod    
@@ -317,7 +296,7 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
     public function testLegacyApi2UnderscoreQueryRequiresInput($user = '', $mod = '', $func = '', $args = '', $expectE = 0)
     {
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $a = $this->getA(array(
             'makeQuery'
@@ -325,6 +304,8 @@ class Cpanel_Service_Adapter_WHMapiTest extends PHPUnit_Framework_TestCase
         $rObj = $this->getRObj();
         $a->setResponseObject($rObj);
         $a->api2_query($user, $mod, $func, $args);
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
     /**
      * @depends      testLegacyApi2UnderscoreQueryRequiresInput

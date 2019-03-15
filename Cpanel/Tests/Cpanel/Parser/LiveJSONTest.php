@@ -1,10 +1,13 @@
 <?php
+
+
+
 /**
  * @covers Cpanel_Parser_LiveJSON
  * @author davidneimeyer
  *         
  */
-class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
+class Cpanel_Parser_LiveJSONTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Parser_LiveJSON
@@ -31,7 +34,7 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     /**
@@ -52,7 +55,7 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object($args);
     }
@@ -175,11 +178,6 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
         $p->mode = '';
         $p->setMode($input);
         $this->assertEquals($p->mode, $mode);
-    }
-    public function testPrivateHasParseError()
-    {
-        $p = new $this->cut();
-        $this->assertAttributeEquals(null, '_hasParseError', $p);
     }
     public function testInterface()
     {
@@ -327,28 +325,6 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
     /**
-     * @depends testPrivateHasParseError
-     */
-    public function testGetParserInternalErrorsReturnBlankByDefault()
-    {
-        $p = $this->getP();
-        $this->assertEmpty($p->getParserInternalErrors());
-    }
-    /**
-     * @depends testGetParserInternalErrorsReturnBlankByDefault
-     */
-    public function testGetParserInternalErrorsReturnMinimumOfPrefix()
-    {
-        $p = new $this->cut();
-        $prefix = 'foo';
-        $rprop = new ReflectionProperty($p, '_hasParseError');
-        $rprop->setAccessible(true);
-        $rprop->setValue($p, true);
-        $r = $p->getParserInternalErrors($prefix);
-        $condition = (strpos($r, $prefix) === 0);
-        $this->assertTrue($condition);
-    }
-    /**
      * @depends testGetParserInternalErrorsParameters
      */
     public function testGetParserInternalErrorsReturnGenericMessageWhenPrivateHasParseErrorIsSet()
@@ -399,7 +375,7 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 $raw . "}",
-                JSON_ERROR_STATE_MISMATCH
+                JSON_ERROR_SYNTAX
             ),
         );
     }
@@ -471,10 +447,15 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
     public function testParseThrowOnBadInput($input, $expectE)
     {
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $p = new $this->cut();
-        $p->parse($input);
+        $result = $p->parse($input);
+        if(!$expectE && $input == ''){
+            $this->assertEquals($result, 'JSON Decode - Cannot decode empty string.');
+        }else{
+            $this->assertEquals($result, $this->getParsedDataArray());
+        }
     }
     public function parseMethodData2()
     {
@@ -505,7 +486,7 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 $this->addLiveWrapTag($raw . "}"),
-                $classerr . $this->getJSONErrorMsg(JSON_ERROR_STATE_MISMATCH)
+                $classerr . $this->getJSONErrorMsg(JSON_ERROR_SYNTAX)
             ),
         );
     }
@@ -593,15 +574,15 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
     {
         $p = new $this->cut();
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
-        $p->encodeQueryObject($input);
+        $result = $p->encodeQueryObject($input);
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
-    /**
-     * @expectedException Exception
-     */
     public function testEncodeQueryObjectThrowOnBadEncode()
     {
+        $this->expectException('Exception');
         $p = new $this->cut();
         $data = array(
             'foo' => 'bar',
@@ -663,9 +644,11 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
     {
         $p = new $this->cut();
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $p->encodeQuery($input);
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
     public function rObjData()
     {
@@ -746,11 +729,10 @@ class Cpanel_Parser_LiveJSONTest extends PHPUnit_Framework_TestCase
         $rObj->query->func = $func;
         $rObj->query->apiversion = $apiverion;
         $rObj->query->args = $args;
-        if ($expectE) {
-            $this->setExpectedException('Exception');
-        }
         $p = new $this->cut();
-        $p->encodeQuery($rObj);
+        $result = $p->encodeQuery($rObj);
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
     public function rObjData2()
     {

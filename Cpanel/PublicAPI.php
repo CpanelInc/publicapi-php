@@ -312,8 +312,9 @@ class Cpanel_PublicAPI extends Cpanel_Core_Object
         //TODO: decouple and thoroughly test deeply nested configs
         if (!empty($name)) {
             $workingConfigNamed = $self->getNamedConfig($name, $workingConfig);
+
             if (count($workingConfigNamed)) {
-                if (count($workingConfig->config)) {
+                if ($workingConfig->config && count($workingConfig->config)) {
                     //must try to merge
                     $workingConfig = self::mergeConfigs(
                         $workingConfig->config->getAllDataRecursively(),

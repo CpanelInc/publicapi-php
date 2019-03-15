@@ -1,10 +1,13 @@
 <?php
+
+
+
 /**
  * @covers Cpanel_Parser_JSON
  * @author davidneimeyer
  *         
  */
-class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
+class Cpanel_Parser_JSONTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Parser_JSON
@@ -31,7 +34,7 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     /**
@@ -52,7 +55,7 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object();
     }
@@ -176,11 +179,6 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
         $p->setMode($input);
         $this->assertEquals($p->mode, $mode);
     }
-    public function testPrivateHasParseError()
-    {
-        $p = new $this->cut();
-        $this->assertAttributeEquals(null, '_hasParseError', $p);
-    }
     public function testInterface()
     {
         $p = new $this->cut();
@@ -271,26 +269,30 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
     public function getJSONErrorMsg($errCode)
     {
         switch ($errCode) {
-        case JSON_ERROR_DEPTH:
-            $errmsg = 'Maximum stack depth exceeded.';
-            break;
-
-        case JSON_ERROR_CTRL_CHAR:
-            $errmsg = 'Unexpected control character found.';
-            break;
-
-        case JSON_ERROR_SYNTAX:
-            $errmsg = 'Syntax error, malformed JSON.';
-            break;
-
-        case JSON_ERROR_STATE_MISMATCH:
-            $errmsg = 'Invalid or malformed JSON.';
-            break;
-
-        default:
-            $errmsg = '';
+            case JSON_ERROR_DEPTH:
+                return 'The maximum stack depth has been exceeded';
+            case JSON_ERROR_STATE_MISMATCH:
+                return 'Invalid or malformed JSON';
+            case JSON_ERROR_CTRL_CHAR:
+                return 'Control character error, possibly incorrectly encoded';
+            case JSON_ERROR_SYNTAX:
+                return 'Syntax error';
+            case JSON_ERROR_UTF8:
+                return 'Malformed UTF-8 characters, possibly incorrectly encoded';
+            case JSON_ERROR_RECURSION:
+                return 'One or more recursive references in the value to be encoded';
+            case JSON_ERROR_INF_OR_NAN:
+                return 'One or more NAN or INF values in the value to be encoded';
+            case JSON_ERROR_UNSUPPORTED_TYPE:
+                return 'A value of a type that cannot be encoded was given';
+            case JSON_ERROR_INVALID_PROPERTY_NAME:
+                return 'A property name that cannot be encoded was given';
+            case JSON_ERROR_UTF16:
+                return 'Malformed UTF-16 characters, possibly incorrectly encoded';
+            case JSON_ERROR_NONE:
+            default:
+                return '';
         }
-        return $errmsg;
     }
     /**
      * @dataProvider rftData
@@ -315,9 +317,6 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
         }
         $this->assertEquals($expected, $actual);
     }
-    /**
-     * @depends testPrivateHasParseError
-     */
     public function testGetParserInternalErrorsReturnBlankByDefault()
     {
         $p = $this->getP();
@@ -388,7 +387,7 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 $raw . "}",
-                JSON_ERROR_STATE_MISMATCH
+                JSON_ERROR_SYNTAX
             ),
         );
     }
@@ -460,10 +459,15 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
     public function testParseThrowOnBadInput($input, $expectE)
     {
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $p = new $this->cut();
-        $p->parse($input);
+        $result = $p->parse($input);
+        if(!$expectE && $input == ''){
+            $this->assertEquals($result, 'JSON Decode - Cannot decode empty string.');
+        }else{
+            $this->assertEquals($result, $this->getParsedDataArray());
+        }
     }
     public function parseMethodData2()
     {
@@ -489,7 +493,7 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 $raw . "}",
-                $classerr . $this->getJSONErrorMsg(JSON_ERROR_STATE_MISMATCH)
+                $classerr . $this->getJSONErrorMsg(JSON_ERROR_SYNTAX)
             ),
         );
     }
@@ -559,15 +563,16 @@ class Cpanel_Parser_JSONTest extends PHPUnit_Framework_TestCase
     {
         $p = new $this->cut();
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
-        $p->encodeQueryObject($input);
+        $result = $p->encodeQueryObject($input);
+        if(!$expectE){
+            $this->assertEquals($result, '[]');
+        }
     }
-    /**
-     * @expectedException Exception
-     */
     public function testEncodeQueryObjectThrowOnBadEncode()
     {
+        $this->expectException('Exception');
         $p = new $this->cut();
         $data = array(
             'foo' => 'bar',

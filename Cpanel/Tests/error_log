@@ -1,0 +1,8 @@
+[15-Mar-2019 15:27:51 UTC] PHP Warning:  socket_read(): unable to read from socket [104]: Connection reset by peer in /home/phpunit/publicapi-php/Cpanel/Tests/MockSocketServer.php on line 45
+[15-Mar-2019 15:27:51 UTC] PHP Warning:  socket_read(): unable to read from socket [104]: Connection reset by peer in /home/phpunit/publicapi-php/Cpanel/Tests/MockSocketServer.php on line 45
+[15-Mar-2019 15:27:51 UTC] PHP Warning:  socket_read(): unable to read from socket [104]: Connection reset by peer in /home/phpunit/publicapi-php/Cpanel/Tests/MockSocketServer.php on line 45
+[15-Mar-2019 15:27:51 UTC] PHP Warning:  socket_read(): unable to read from socket [104]: Connection reset by peer in /home/phpunit/publicapi-php/Cpanel/Tests/MockSocketServer.php on line 45
+[15-Mar-2019 15:28:20 UTC] PHP Warning:  socket_read(): unable to read from socket [104]: Connection reset by peer in /home/phpunit/publicapi-php/Cpanel/Tests/MockSocketServer.php on line 45
+[15-Mar-2019 15:28:20 UTC] PHP Warning:  socket_read(): unable to read from socket [104]: Connection reset by peer in /home/phpunit/publicapi-php/Cpanel/Tests/MockSocketServer.php on line 45
+[15-Mar-2019 15:28:20 UTC] PHP Warning:  socket_read(): unable to read from socket [104]: Connection reset by peer in /home/phpunit/publicapi-php/Cpanel/Tests/MockSocketServer.php on line 45
+[15-Mar-2019 15:28:20 UTC] PHP Warning:  socket_read(): unable to read from socket [104]: Connection reset by peer in /home/phpunit/publicapi-php/Cpanel/Tests/MockSocketServer.php on line 45

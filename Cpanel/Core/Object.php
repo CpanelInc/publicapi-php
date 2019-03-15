@@ -54,7 +54,7 @@
  * @link      http://sdk.cpanel.net
  * @since     0.1.0
  */
-class Cpanel_Core_Object implements IteratorAggregate
+class Cpanel_Core_Object implements IteratorAggregate, Countable
 {
     /**
      * internal storage location
@@ -83,6 +83,11 @@ class Cpanel_Core_Object implements IteratorAggregate
     {
         return new ArrayIterator($this->dataContainer);
     }
+
+    public function count() {
+        return $this->getIterator()->count();
+    }
+
     /**
      * Accessor for storing data internally
      * 

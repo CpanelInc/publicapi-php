@@ -28,7 +28,7 @@ class mockCoreException extends Exception
  * @author davidneimeyer
  *         
  */
-class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
+class Cpanel_Service_AbstractTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Service_Abstract
@@ -55,7 +55,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     /**
@@ -76,7 +76,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object();
     }
@@ -148,11 +148,11 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
     /**
-     * @expectedException Exception
      * @depends           testHasAbstractMethods
      */
     public function testConstructThrowsOnBadInput()
     {
+        $this->expectExceptionMessage('setOptions() must receive an iterable variable type.');
         $cs = $this->getCS();
         $rmeth = new ReflectionMethod($this->cut, '__construct');
         $rmeth->invoke($cs, 'fakestring');
@@ -202,10 +202,11 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Cpanel_Listner_Subject_Abstract', $cs->listner);
     }
     /**
-     * @expectedException Exception
+     * @expectExceptionMessage Exception
      */
     public function testDisableAdapterThrowOnBadType()
     {
+        $this->expectExceptionMessage('Invalid adapter type');
         $cs = $this->getCS(array(
             'validAdapter'
         ));
@@ -225,10 +226,11 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(in_array('foo', $da));
     }
     /**
-     * @expectedException Exception
+     * @expectExceptionMessage Exception
      */
     public function testEnableAdapterThrowOnBadType()
     {
+        $this->expectExceptionMessage('Invalid adapter type');
         $cs = $this->getCS(array(
             'validAdapter'
         ));
@@ -259,7 +261,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         $rmeth = new ReflectionMethod($cs, '_getEUIDAuth');
         $rmeth->setAccessible(true);
         $r = $rmeth->invoke($cs);
-        $this->assertInternalType('array', $r);
+        $this->assertIsArray($r);
     }
     /**
      * @depends testPrivategetEUIDAuthReturnsArray
@@ -675,7 +677,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             'protocol' => $protocol,
             'disableEnvironmentContext' => true,
         );
-        $adapter = $this->getMock('concreteCoreRemoteQuery', array(
+        $adapter = $this->_makeMock('concreteCoreRemoteQuery', array(
             'init'
         ));
         $adapter->expects($this->once())->method('init')->with($host, $user, $password);
@@ -703,7 +705,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             'protocol' => $protocol,
             'disableEnvironmentContext' => true,
         );
-        $adapter = $this->getMock('concreteCoreRemoteQuery', array(
+        $adapter = $this->_makeMock('concreteCoreRemoteQuery', array(
             'init',
             'setPort'
         ));
@@ -734,7 +736,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             'protocol' => $protocol,
             'disableEnvironmentContext' => true,
         );
-        $adapter = $this->getMock('concreteCoreRemoteQuery', array(
+        $adapter = $this->_makeMock('concreteCoreRemoteQuery', array(
             'init',
             'setPort'
         ));
@@ -765,7 +767,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             'protocol' => $protocol,
             'disableEnvironmentContext' => true,
         );
-        $adapter = $this->getMock('concreteCoreRemoteQuery', array(
+        $adapter = $this->_makeMock('concreteCoreRemoteQuery', array(
             'init',
             'setProtocol'
         ));
@@ -797,7 +799,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             'protocol' => $protocol,
             'disableEnvironmentContext' => true,
         );
-        $adapter = $this->getMock('concreteCoreRemoteQuery', array(
+        $adapter = $this->_makeMock('concreteCoreRemoteQuery', array(
             'init',
             'setProtocol'
         ));
@@ -828,7 +830,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             'protocol' => $protocol,
             'disableEnvironmentContext' => true,
         );
-        $adapter = $this->getMock('concreteCoreRemoteQuery', array(
+        $adapter = $this->_makeMock('concreteCoreRemoteQuery', array(
             'init',
             'setHash'
         ));
@@ -1059,10 +1061,11 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($oAdapterName, $rObj->query->adapter);
     }
     /**
-     * @expectedException Exception
+     * @expectExceptionMessage Exception
      */
     public function testGetAdapterThroWhenAdapterIsSetInROThatsDisabled()
     {
+        $this->expectExceptionMessage('Requested adapter \'live\' has been disabled');
         $rObj = $this->getRObj();
         $cs = $this->getCS(array(
             'getDefaultAdapterName'
@@ -1159,7 +1162,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
                     'two',
                 ),
                 0,
-                'ordinal'
+                'associative'
             ),
         );
     }
@@ -1175,7 +1178,9 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         $rprop = new ReflectionMethod($cs, 'arrayType');
         $rprop->setAccessible(true);
         if ($expectExcep) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
+        }else{
+            $this->assertEquals($expectType, $rprop->invoke($cs, $input));
         }
         $rprop->invoke($cs, $input);
     }
@@ -1189,15 +1194,20 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
      */
     public function testProtectedArrayTypeReturnRightType($input, $expectExcep, $expectType = null)
     {
-        if (!is_null($expectType)) {
-            $cs = $this->getCS();
-            $rprop = new ReflectionMethod($cs, 'arrayType');
-            $rprop->setAccessible(true);
+        $cs = $this->getCS();
+        $rprop = new ReflectionMethod($cs, 'arrayType');
+        $rprop->setAccessible(true);
+        if ($expectExcep) {
+            $this->expectException('Exception');
+        }else{
             $this->assertEquals($expectType, $rprop->invoke($cs, $input));
         }
+        $rprop->invoke($cs, $input);
+
     }
     public function testLegacySetUnderscoreTypeUsesStoreAdapter()
     {
+        $rObj = $this->getRObj();
         $cs = $this->getCS(array(
             'genResponseObject',
             'getDefaultAdapterName'
@@ -1217,6 +1227,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
     }
     public function testLegacySetUnderscoreTypeAltersAdapter()
     {
+        $rObj = $this->getRObj();
         $cs = $this->getCS(array(
             'genResponseObject',
             'getDefaultAdapterName'
@@ -1272,11 +1283,13 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
     }
     /**
      * @dataProvider      badSetOutputData
-     * @expectedException Exception
+     * @expectExceptionMessage Exception
      * @depends           testLegacySetUnderscoreTypeUsesStoreAdapter
      */
     public function testLegacySetUnderscoreTypeThrowOnBadInput($type)
     {
+        $this->expectExceptionMessage('Invalid adapter');
+        $rObj = $this->getRObj();
         $cs = $this->getCS(array(
             'genResponseObject',
             'getDefaultAdapterName'
@@ -1345,10 +1358,11 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
      * @dataProvider      checkParamData
      * @depends           testClassHasConstants
      * @depends           testProtectedCheckParamsHasRightInputArgs
-     * @expectedException Exception
+     * @expectExceptionMessage Exception
      */
     public function testProtectedCheckParamsThrowsOnBadInput($service, $mf, $args, $method, $argType)
     {
+        $this->expectExceptionMessage('someMethodNameForLogging requires a');
         $cs = $this->getCS(array(
             'validAdapter'
         ));
@@ -1412,7 +1426,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             'isLocalQuery'
         ));
         if ($expectFail) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $fail = ($expectFail) ? false : $service;
         $cs->expects($this->once())->method('validAdapter')->will($this->returnValue($fail));
@@ -1483,7 +1497,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
             'isLocalQuery'
         ));
         if ($expectFail) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $cs->expects($this->once())->method('validAdapter')->will($this->returnValue($service));
         $cs->expects($this->once())->method('isLocalQuery')->will($this->returnValue($live));
@@ -1582,7 +1596,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         }
         $cs->expects($this->once())->method('validAdapter')->will($this->returnValue($n));
         if ($expectFail) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $rmeth = new ReflectionMethod($cs, 'checkParams');
         $rmeth->setAccessible(true);
@@ -1684,7 +1698,7 @@ class Cpanel_Service_AbstractTest extends PHPUnit_Framework_TestCase
         }
         $cs->expects($this->once())->method('validAdapter')->will($this->returnValue($n));
         if ($expectFail) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $rmeth = new ReflectionMethod($cs, 'checkParams');
         $rmeth->setAccessible(true);

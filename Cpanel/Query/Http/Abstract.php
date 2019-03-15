@@ -81,6 +81,10 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
      */
     protected $user = null;
     /**
+     * Authenticating token
+     */
+    protected $token = null;
+    /**
      * PHP remote query function set
      * 'curl'|'fopen'
      */
@@ -351,9 +355,9 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
      */
     public function setAuthType($auth_type)
     {
-        if ($auth_type != 'hash' && $auth_type != 'pass') {
+        if ($auth_type != 'hash' && $auth_type != 'pass' && $auth_type != 'token') {
             throw new Exception(
-                'The only two allowable auth types are "hash" and "pass"'
+                'The only allowable auth types are "hash", "pass", and “token”'
             );
         }
         $this->auth_type = $auth_type;
@@ -374,6 +378,23 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
     {
         $this->setAuthType('pass');
         $this->auth = $pass;
+        return $this;
+    }
+    /**
+     * Accessor to set the authentication token
+     *
+     * The method will invoke {@link setAuthType} with 'token'
+     *
+     * @param string $token The api token to authenticate with
+     * 
+     * @see    setAuthType()
+     * 
+     * @return Cpanel_Query_Http_Abstract
+     */
+    public function setToken($token)
+    {
+        $this->setAuthType('token');
+        $this->auth = $token;
         return $this;
     }
     /**
@@ -608,6 +629,12 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
                   . ':'
                   . $this->auth
                   . "\r\n";
+        } elseif ($this->auth_type == 'token') {
+            return 'Authorization: cpanel '
+                . $this->user
+                . ':'
+                . $this->auth
+                . "\r\n";
         } elseif ($this->auth_type == 'pass') {
             return 'Authorization: Basic '
                  . base64_encode($this->user . ':' . $this->auth)
@@ -1034,7 +1061,9 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
             if (count($nameParts) > 1) {
                 array_walk(
                     $nameParts,
-                    create_function('&$v', '$v = ucfirst(strtolower($v));')
+                    function ($v){
+                        $v = ucfirst(strtolower($v));
+                    }
                 );
                 $mname = 'set' . implode('', $nameParts);
             } else {

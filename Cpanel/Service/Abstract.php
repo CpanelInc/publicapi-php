@@ -515,7 +515,8 @@ abstract class Cpanel_Service_Abstract extends Cpanel_Core_Object
             );
         }
         ksort($arr);
-        $fkey = array_shift(array_keys($arr));
+        $arr = array_keys($arr);
+        $fkey = array_shift($arr);
         if (is_int($fkey)) {
             return self::API1ARGS;
         }
@@ -578,6 +579,23 @@ abstract class Cpanel_Service_Abstract extends Cpanel_Core_Object
         foreach ($this->adapters as $a) {
             if (method_exists($a, 'setPassword')) {
                 $a->setPassword($password);
+            }
+        }
+        return $this;
+    }
+    /**
+     * Proxy accessor method for pushing token into adapters
+     * 
+     * @param string $token Value to set
+     * 
+     * @return Cpanel_Service_Abstract
+     */
+    public function setToken($token)
+    {
+        $this->setOptions(array('token'=>$token));
+        foreach ($this->adapters as $a) {
+            if (method_exists($a, 'setToken')) {
+                $a->setToken($token);
             }
         }
         return $this;

@@ -244,6 +244,9 @@ class Cpanel_Parser_XML extends Cpanel_Core_Object implements Cpanel_Parser_Inte
                     $this->_recurse_node_build($value, $sub_obj[$i]);
                 }
             } else {
+                if (!is_string($value)) {
+                    throw new Exception('Value must be a raw response string');
+                }
                 $sub_obj[$i] = $this->_dom->createElement($key, $value);
                 $obj->appendChild($sub_obj[$i]);
             }
