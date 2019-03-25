@@ -2,6 +2,11 @@
 require_once dirname(__FILE__) . '/Cpanel/Util/Autoload.php';
 use PHPUnit\Framework\TestCase;
 
+/**
+ * A TestCase Class specific to cPanel to allow future mocking or overriding
+ * @author dustin-s    
+ * @covers CpanelTestCase
+ */
 class CpanelTestCase extends TestCase
 {
     protected function _makeMock($className, $methods = array(), $args = array(), $mockName = '', $callConst = true, $callClone = true, $callA = true) {
