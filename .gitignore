@@ -1,2 +1,2 @@
 .phpunit.result.cache
-error_log
+**/error_log
