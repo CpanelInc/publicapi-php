@@ -33,7 +33,7 @@
  * @author    David Neimeyer <david.neimeyer@cpanel.net>
  * @copyright Copyright (c) 2011, cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
  * @license   http://sdk.cpanel.net/license/bsd.html BSD License 
- * @version   0.1.0
+ * @version   0.2.0
  * @link      http://sdk.cpanel.net
  * @since     0.1.0
 */
@@ -46,7 +46,7 @@
  * @author    David Neimeyer <david.neimeyer@cpanel.net>
  * @copyright Copyright (c) 2011, cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
  * @license   http://sdk.cpanel.net/license/bsd.html BSD License 
- * @version   0.1.0
+ * @version   0.2.0
  * @link      http://sdk.cpanel.net
  * @since     0.1.0
  */
