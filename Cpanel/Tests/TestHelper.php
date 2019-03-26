@@ -6,7 +6,7 @@
  * 
  * Added Cpanel directory to include path and loads the Cpanel Autoloader
  * 
- * Copyright (c) 2011, cPanel, Inc.
+ * Copyright (c) 2011, cPanel, L.L.C.
  * All rights reserved.
  * http://cpanel.net
  *
@@ -17,7 +17,7 @@
  *    * Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in the
  *      documentation and/or other materials provided with the distribution.
- *    * Neither the name of cPanel, Inc. nor the
+ *    * Neither the name of cPanel, L.L.C. nor the
  *      names of its contributors may be used to endorse or promote products
  *      derived from this software without specific prior written permission.
  *
@@ -35,7 +35,7 @@
  * @category  Cpanel
  * @package   Cpanel_Test
  * @author    David Neimeyer <david.neimeyer@cpanel.net>
- * @copyright Copyright (c) 2011, cPanel, Inc., All rights Reserved. (http://cpanel.net) 
+ * @copyright Copyright (c) 2011, cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
  * @license   http://sdk.cpanel.net/license/bsd.html BSD License 
  * @version   0.1.0
  * @link      http://sdk.cpanel.net
