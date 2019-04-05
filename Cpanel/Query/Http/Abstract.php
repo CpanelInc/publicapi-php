@@ -357,7 +357,7 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
     {
         if ($auth_type != 'hash' && $auth_type != 'pass' && $auth_type != 'token') {
             throw new Exception(
-                'The only allowable auth types are "hash", "pass", and “token”'
+                'The only allowable auth types are "hash", "pass", and "token"'
             );
         }
         $this->auth_type = $auth_type;
