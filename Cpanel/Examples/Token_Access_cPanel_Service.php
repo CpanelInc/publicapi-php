@@ -44,6 +44,8 @@
 TRY {
     require_once realpath( dirname(__FILE__) . '/../Util/Autoload.php');
 
+    # Replace these values with real values from your server
+    # You can generate a cPanel API Token in the Cpanel > API Tokens Interface
     $HOST_NAME = '10.1.32.118';
     $HOST_USER = 'green';
     $TOKEN = '33JK2FL611YNDACZX1EO4M1N7O37HHPE';
