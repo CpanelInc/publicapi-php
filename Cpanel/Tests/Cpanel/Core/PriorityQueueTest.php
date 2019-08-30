@@ -1,8 +1,11 @@
 <?php
+
+
+
 /**
  * Test class for Cpanel_Core_PriorityQueue.
  */
-class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
+class Cpanel_Core_PriorityQueueTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Core_PriorityQueue
@@ -18,7 +21,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->obj = new $this->cut();
         $this->obs = $this->getNewObserver();
@@ -27,7 +30,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
     }
     /**
@@ -75,34 +78,34 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify Exception throw for string attach
-     * @expectedException Exception
      */
     public function testAttachThrowsOnString()
     {
+        $this->expectException("Exception");
         $this->obj->attach('--fake--', 90);
     }
     /**
      * Verify Exception throw for array attach
-     * @expectedException Exception
      */
     public function testAttachThrowsOnArray()
     {
+        $this->expectException("Exception");
         $this->obj->attach(array(), 99);
     }
     /**
      * Verify Exception throw for bool attach
-     * @expectedException Exception
      */
     public function testAttachThrowsOnBool()
     {
+        $this->expectException("Exception");
         $this->obj->attach(true, 108);
     }
     /**
      * Verify Exception throw for int attach
-     * @expectedException Exception
      */
     public function testAttachThrowsOnInt()
     {
+        $this->expectException("Exception");
         $this->obj->attach(117, 117);
     }
     /**
@@ -128,34 +131,34 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify Exception throw for string contains
-     * @expectedException Exception
      */
     public function testContainsThrowsOnString()
     {
+        $this->expectException("Exception");
         $this->obj->contains('--fake--');
     }
     /**
      * Verify Exception throw for array contains
-     * @expectedException Exception
      */
     public function testContainsThrowsOnArray()
     {
+        $this->expectException("Exception");
         $this->obj->contains(array());
     }
     /**
      * Verify Exception throw for bool contains
-     * @expectedException Exception
      */
     public function testContainsThrowsOnBool()
     {
+        $this->expectException("Exception");
         $this->obj->contains(true);
     }
     /**
      * Verify Exception throw for int contains
-     * @expectedException Exception
      */
     public function testContainsThrowsOnInt()
     {
+        $this->expectException("Exception");
         $this->obj->contains(117);
     }
     /**
@@ -173,34 +176,34 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify Exception throw for string detach
-     * @expectedException Exception
      */
     public function testDetachThrowsOnString()
     {
+        $this->expectException("Exception");
         $this->obj->detach('--fake--');
     }
     /**
      * Verify Exception throw for array detach
-     * @expectedException Exception
      */
     public function testDetachThrowsOnArray()
     {
+        $this->expectException("Exception");
         $this->obj->detach(array());
     }
     /**
      * Verify Exception throw for bool detach
-     * @expectedException Exception
      */
     public function testDetachThrowsOnBool()
     {
+        $this->expectException("Exception");
         $this->obj->detach(true);
     }
     /**
      * Verify Exception throw for int detach
-     * @expectedException Exception
      */
     public function testDetachThrowsOnInt()
     {
+        $this->expectException("Exception");
         $this->obj->detach(117);
     }
     /**
@@ -298,10 +301,10 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * @depends           testAttachStoresSomething
-     * @expectedException Exception
      */
     public function testPrivateReturnStructureThrowOnObj()
     {
+        $this->expectException("Exception");
         $rmeth = new ReflectionMethod($this->cut, '_returnStructure');
         $rmeth->setAccessible(true);
         $pq = $this->obj;
@@ -313,10 +316,10 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * @depends           testAttachStoresSomething
-     * @expectedException Exception
      */
     public function testPrivateReturnStructureThrowOnString()
     {
+        $this->expectException("Exception");
         $rmeth = new ReflectionMethod($this->cut, '_returnStructure');
         $rmeth->setAccessible(true);
         $pq = $this->obj;
@@ -328,10 +331,10 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * @depends           testAttachStoresSomething
-     * @expectedException Exception
      */
     public function testPrivateReturnStructureThrowOnInt()
     {
+        $this->expectException("Exception");
         $rmeth = new ReflectionMethod($this->cut, '_returnStructure');
         $rmeth->setAccessible(true);
         $pq = $this->obj;
@@ -343,10 +346,10 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * @depends           testAttachStoresSomething
-     * @expectedException Exception
      */
     public function testPrivateReturnStructureThrowOnBool()
     {
+        $this->expectException("Exception");
         $rmeth = new ReflectionMethod($this->cut, '_returnStructure');
         $rmeth->setAccessible(true);
         $pq = $this->obj;
@@ -358,10 +361,10 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * @depends           testAttachStoresSomething
-     * @expectedException Exception
      */
     public function testPrivateReturnStructureThrowOnEmptyArray()
     {
+        $this->expectException("Exception");
         $rmeth = new ReflectionMethod($this->cut, '_returnStructure');
         $rmeth->setAccessible(true);
         $pq = $this->obj;
@@ -463,7 +466,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
             'inf' => 346
         );
         $r = $rmeth->invoke($pq, $mref);
-        $this->assertInternalType('array', $r);
+        $this->assertIsArray($r);
         $this->assertArrayHasKey('data', $r);
         $this->assertArrayHasKey('priority', $r);
         $this->assertEquals(spl_object_hash($obs), spl_object_hash($r['data']));
@@ -480,7 +483,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     public function testCurrent($fixtureArray)
     {
         list($pq, $rprop, $mockObserver) = $fixtureArray;
-        $pq = $this->getMock($this->cut, array(
+        $pq = $this->_makeMock($this->cut, array(
             '_returnStructure'
         ));
         $pq->setExtractFlag(Cpanel_Core_PriorityQueue::EXTR_DATA);
@@ -708,10 +711,10 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * @dataProvider      getBadCompareInput
-     * @expectedException Exception
      */
     public function testCompareThrowsOnBadInput($a, $b)
     {
+        $this->expectException("Exception");
         $pq = $this->obj;
         //        $a = $badInput[0];
         //        $b = $badInput[1];
@@ -832,7 +835,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
      */
     public function testExtractCallsTop()
     {
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'top'
         ));
         $mock->setExtractFlag(Cpanel_Core_PriorityQueue::EXTR_PRIORITY);
@@ -864,7 +867,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
      */
     public function testGetInfoCallsValid()
     {
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'valid'
         ));
         $mock->expects($this->once())->method('valid');
@@ -903,7 +906,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
      */
     public function testSetInfoCallsValid()
     {
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'valid'
         ));
         $mock->expects($this->once())->method('valid');
@@ -961,7 +964,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
      */
     public function testOffsetSet()
     {
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'offsetSet'
         ));
         $mock->expects($this->once())->method('offsetSet')->with($this->obs, 613);
@@ -969,10 +972,10 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify Exception is throw for non object
-     * @expectedException Exception
      */
     public function testOffsetSetThrowsOnBlankIndex()
     {
+        $this->expectException("Exception");
         $obs = $this->getNewObserver();
         $this->obj[] = 69;
     }
@@ -991,7 +994,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     public function testOffsetExists()
     {
         $obs = $this->getNewObserver();
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'contains'
         ));
         $mock->expects($this->once())->method('contains')->with($obs);
@@ -1003,7 +1006,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     public function testOffsetUnset()
     {
         $obs = $this->getNewObserver();
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'detach'
         ));
         $mock->expects($this->once())->method('detach')->with($obs);
@@ -1015,7 +1018,7 @@ class Cpanel_Core_PriorityQueueTest extends PHPUnit_Framework_TestCase
     public function testOffsetGetCallsContains()
     {
         $obs = $this->getNewObserver();
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'contains'
         ));
         $mock->expects($this->once())->method('contains')->with($obs);

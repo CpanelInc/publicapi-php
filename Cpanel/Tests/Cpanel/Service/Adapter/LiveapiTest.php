@@ -1,5 +1,8 @@
 <?php
-class Cpanel_Service_Adapter_LiveapiTest extends PHPUnit_Framework_TestCase
+
+
+
+class Cpanel_Service_Adapter_LiveapiTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Service_Adapter_Liveapi
@@ -32,7 +35,7 @@ class Cpanel_Service_Adapter_LiveapiTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     /**
@@ -53,16 +56,16 @@ class Cpanel_Service_Adapter_LiveapiTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object();
     }
     //    public static function setUpBeforeClass()
-    public function setUp()
+    public function setUp(): void
     {
         self::startMSS();
     }
-    public function tearDown()
+    public function tearDown(): void
     {
         self::stopMSS();
     }
@@ -95,7 +98,7 @@ class Cpanel_Service_Adapter_LiveapiTest extends PHPUnit_Framework_TestCase
             self::fail('Socket file does not exist: ' . $socketfile);
         }
     }
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (!empty(self::$fakeResources)) {
             foreach (self::$fakeResources as $name => $fh) {
@@ -263,10 +266,11 @@ class Cpanel_Service_Adapter_LiveapiTest extends PHPUnit_Framework_TestCase
         $this->assertContains('foo', $rprop->getValue($live));
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetAdapterResponseFormatTypeThrowOnUnknownType()
     {
+        $this->expectException('Exception');
         $live = $this->getLive();
         $live->setAdapterResponseFormatType('FooBarFooey');
     }
@@ -299,6 +303,8 @@ class Cpanel_Service_Adapter_LiveapiTest extends PHPUnit_Framework_TestCase
         $live = $this->getLive();
         $live->registerAdapterResponseFormatType('BarBazChewie');
         $live->setAdapterResponseFormatType('BarBazChewie');
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
     public function testMakeQueryMethodExistsForCUT()
     {

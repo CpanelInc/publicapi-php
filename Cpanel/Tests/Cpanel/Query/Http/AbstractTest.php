@@ -1,4 +1,7 @@
 <?php
+
+
+
 class concreteRemoteQuery extends Cpanel_Query_Http_Abstract
 {
     public function getAdapterResponseFormatType()
@@ -12,7 +15,7 @@ class concreteRemoteQuery extends Cpanel_Query_Http_Abstract
  * Test class for Cpanel_Query_Http_Abstract.
  * @covers Cpanel_Query_Http_Abstract
  */
-class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
+class Cpanel_Query_Http_AbstractTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Query_Http_Abstract
@@ -40,7 +43,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        return $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        return $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
     }
     /** 
      * @return Cpanel_Query_Object
@@ -51,15 +54,16 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object();
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testConstructThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rmeth = new ReflectionMethod($this->cut, '__construct');
         $rmeth->invoke($rq, new stdClass());
@@ -92,10 +96,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetResponseObjectThrowOnNonQueryObject()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rq->setResponseObject(new stdClass());
     }
@@ -105,7 +110,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
     public function testSetResponseObjectDoesSomething()
     {
         $rObj = $this->getRObj();
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'setOptions'
         ));
         $mock->expects($this->once())->method('setOptions')->with(array(
@@ -163,10 +168,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
     /**
      * Verify client type is checked
      * @depends           testInitCallsGetValidClientType
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testInitThrowsOnBadGetClientTypeReturn()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ(array(
             'getValidClientType'
         ));
@@ -183,10 +189,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
     }
     /**
      * @depends           testInitParamOrder
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testInitThrowsWithoutHost()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rq->init();
     }
@@ -433,7 +440,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rprop->setValue($rq, $base);
         $rq->setPort($portStr);
         $actual = $rprop->getValue($rq);
-        $this->assertInternalType('integer', $actual);
+        $this->assertIsInt($actual);
     }
     /**
      * Verify only valid ports
@@ -461,10 +468,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($ports, $eports);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetPortThrowOnInvalidCalculatedProtocol()
     {
+        $this->expectException('Exception');
         $port = 2086;
         $rprop = new ReflectionProperty($this->cut, 'port');
         $rprop->setAccessible(true);
@@ -502,10 +510,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify throws on non 'http'|'https'
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetProtocolThrowsOnInvalid()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rq->setProtocol('foo');
     }
@@ -548,10 +557,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->set_auth_type($o);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetAuthTypeThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $rprop = new ReflectionProperty($this->cut, 'auth_type');
         $rprop->setAccessible(true);
         $rq = $this->getRQ();
@@ -568,6 +578,9 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->setAuthType($expected);
         $actual = $rprop->getValue($rq);
         $this->assertEquals($expected, $actual);
+        $rq->setAuthType('token');
+        $actual = $rprop->getValue($rq);
+        $this->assertEquals('token', $actual);
     }
     public function testLegacySetPasswordCallsSetPassword()
     {
@@ -635,7 +648,14 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
     {
         $rq = $this->getRQ();
         $rq->setHash("foo\r\nbar\r\n\n\r");
-        $this->assertAttributeEquals('foobar', 'auth', $rq);
+
+        $reflector = new ReflectionObject($rq);
+        $attribute = $reflector->getProperty('auth');
+        $attribute->setAccessible(true);
+        $value = $attribute->getValue($rq);
+        $attribute->setAccessible(false);
+
+        $this->assertEquals('foobar', $value);
     }
     public function testLegacySetUserCallsSetUser()
     {
@@ -718,10 +738,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->set_http_client($o);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetHttpClientWillThrowOnInvalidInput()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rq->setHttpClient('foo');
     }
@@ -828,10 +849,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($strict, $rq->isURLParamStr($data, true));
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testBuildURLThrowsOnBadQueryObject()
     {
+        $this->expectException('Exception');
         $vars = array(
             'function' => 'version',
             'host' => '1.1.1.1',
@@ -920,7 +942,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
                 }
             }
             if ($vars['expectException']) {
-                $this->setExpectedException('Exception');
+                $this->expectException('Exception');
                 $rq->buildURL($vars['function']);
             } else {
                 $actual = $rq->buildURL($vars['function']);
@@ -1000,41 +1022,53 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $actual = $rq->buildAuthStr();
         $this->assertEquals($expected, $actual);
     }
+    public function testBuildAuthStrReturnsTokenAuthStr()
+    {
+        $user = 'jeb';
+        $auth_type = 'token';
+        $token = 'MYTOKENSTR';
+        $rq = $this->getRQ();
+        $rq->setAuthType($auth_type);
+        $rq->setUser($user);
+        $rq->setToken($token);
+        $expected = "Authorization: cpanel $user:$token\r\n";
+        $actual = $rq->buildAuthStr();
+        $this->assertEquals($expected, $actual);
+    }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testBuildAuthStrThrowsOnBadAuthType()
     {
+        $this->expectException('Exception');
         $user = 'jeb';
         $auth_type = 'badinput';
         $auth = 'foobarbazblurg';
         $rq = $this->getRQ();
-        $rprop = new ReflectionProperty($this->cut, 'auth_type');
-        $rprop->setAccessible(true);
-        $rprop->setValue($rq, $auth_type);
-        $rprop = new ReflectionProperty($this->cut, 'auth');
-        $rprop->setAccessible(true);
-        $rprop->setValue($rq, $auth);
-        $rprop = new ReflectionProperty($this->cut, 'user');
-        $rprop->setAccessible(true);
-        $rprop->setValue($rq, $user);
+
+        $rq->setAuthType($auth_type);
+        $rq->setUser($user);
+        $rq->setHash($auth);
+
         $expected = "Authorization: Basic " . base64_encode($user . ':' . $auth) . "\r\n";
         $actual = $rq->buildAuthStr();
         $this->assertEquals($expected, $actual);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testExecThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rq->exec(new stdClass());
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testExecThrowsOnUndefinedQueryClient()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rObj = $this->getRObj();
         $rObj->setQuery(array(
@@ -1043,10 +1077,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->exec($rObj);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testExecThrowsOnUndefinedQueryClientMethod()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rObj = $this->getRObj();
         $rObj->setQuery(array(
@@ -1156,28 +1191,32 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
     {
         list($rq, $rObj) = $this->getMakeQueryFixture();
         $rq->makeQuery('version');
+        $this->expectNotToPerformAssertions();
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testMakeQueryThrowsOnEmptyInputFunctionVariable()
     {
+        $this->expectException('Exception');
         list($rq, $rObj) = $this->getMakeQueryFixture();
         $rq->makeQuery('');
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testMakeQueryThrowsOnUndefinedPrivateUser()
     {
+        $this->expectException('Exception');
         list($rq, $rObj) = $this->getMakeQueryFixture(false);
         $rq->makeQuery('version');
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testMakeQueryThrowsOnUndefinedPrivateAuth()
     {
+        $this->expectException('Exception');
         list($rq, $rObj) = $this->getMakeQueryFixture(null, null, false);
         $rq->makeQuery('version');
     }
@@ -1230,12 +1269,14 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         list($rq, $rObj) = $this->getMakeQueryFixture(null, null, null, $methods);
         $rq->expects($this->any())->method('getResponseObject')->will($this->returnValue($rObj));
         $rq->makeQuery('version');
+        $this->expectNotToPerformAssertions();
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testMakeQueryWillThrowOnBadResponseObject()
     {
+        $this->expectException('Exception');
         $methods = array(
             'curlExec',
             'exec',
@@ -1319,10 +1360,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testAddCurlPostFieldsThrowOnInvalidResource()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rmeth = new ReflectionMethod($this->cut, 'addCurlPostFields');
         $rmeth->setAccessible(true);
@@ -1334,13 +1376,14 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rmeth = new ReflectionMethod($this->cut, 'addCurlPostFields');
         $rmeth->setAccessible(true);
         $actual = $rmeth->invoke($rq, curl_init(), '', 'what=ever');
-        $this->assertInternalType('string', $actual);
+        $this->assertIsString($actual);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testBuildCurlHeadersThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $user = 'foo';
         $pass = 'bar';
         $postdata = 'what=ever';
@@ -1379,7 +1422,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rmeth = new ReflectionMethod($this->cut, 'buildCurlHeaders');
         $rmeth->setAccessible(true);
         $actual = $rmeth->invoke($rq, $curl, $rObj);
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
     }
     public function testBuildCurlHeadersDoesNotAlterURLForPOST()
     {
@@ -1481,30 +1524,33 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("{$url}?{$postdata}", $rObj->query->url);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testCurlExecRequiresResource()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rmeth = new ReflectionMethod($this->cut, 'curlExec');
         $rmeth->setAccessible(true);
         $actual = $rmeth->invoke($rq, new stdClass());
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testCurlExecThrowsOnBadCall()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rmeth = new ReflectionMethod($this->cut, 'curlExec');
         $rmeth->setAccessible(true);
         $actual = $rmeth->invoke($rq, curl_init());
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testCurlExecThrowsOnBadCallDetailsRObj()
     {
+        $this->expectException('Exception');
         $postdata = 'what=ever';
         $url = 'blurg';
         $rq = $this->getRQ();
@@ -1517,10 +1563,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $actual = $rmeth->invoke($rq, curl_init());
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testCurlQueryThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $rObj = $this->getRObj();
         $rq = $this->getRQ(array(
             'buildCurlHeaders'
@@ -1528,10 +1575,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->curlQuery(new stdClass());
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testCurlQueryThrowsOnBadCall()
     {
+        $this->expectException('Exception');
         $rObj = $this->getRObj();
         $rq = $this->getRQ(array(
             'buildCurlHeaders'
@@ -1552,7 +1600,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
     }
     public function testCurlQueryAttemptsToLogData()
     {
-        $listner = $this->getMock('Cpanel_Listner_Subject_Logger', array(
+        $listner = $this->_makeMock('Cpanel_Listner_Subject_Logger', array(
             'log'
         ));
         $listner->expects($this->once())->method('log');
@@ -1583,10 +1631,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->curlQuery($rObj);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testFopenQueryThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $url = 'http://1.1.1.1:2086/xml-api/version';
         $proto = 'http';
         $rObj = $this->getRObj();
@@ -1601,10 +1650,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->fopenQuery(new stdClass());
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testBuildFopenContextOptsThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ();
         $rmeth = new ReflectionMethod($this->cut, 'buildFopenContextOpts');
         $rmeth->setAccessible(true);
@@ -1617,7 +1667,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rmeth = new ReflectionMethod($this->cut, 'buildFopenContextOpts');
         $rmeth->setAccessible(true);
         $actual = $rmeth->invoke($rq, $rObj);
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
     }
     public function testBuildFopenContextExercisesOptsValues()
     {
@@ -1699,7 +1749,7 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->expects($this->once())->method('getProtocol')->will($this->returnValue($proto));
         $rq->expects($this->any())->method('fopenExec')->will($this->returnValue($this->anything()));
         if (!$valid) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $rq->fopenQuery($rObj);
     }
@@ -1718,12 +1768,14 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rq->expects($this->any())->method('fopenExec')->will($this->returnValue($this->anything()));
         $rq->expects($this->any())->method('buildFopenContextOpts')->with($rObj)->will($this->returnValue(array()));
         $rq->fopenQuery($rObj);
+        $this->expectNotToPerformAssertions();
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testFopenExecThrowsOnInvalidStreamContext()
     {
+        $this->expectException('Exception');
         $url = 'https://1.1.1.1:2087/xml-api/version';
         $context = '';
         $rq = $this->getRQ();
@@ -1732,10 +1784,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $rmeth->invoke($rq, $url, false, $context);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testFopenExecThrowsOnNonURL()
     {
+        $this->expectException('Exception');
         $url = 'https://';
         $context = stream_context_create(array());
         $rq = $this->getRQ();
@@ -1806,10 +1859,11 @@ class Cpanel_Query_Http_AbstractTest extends PHPUnit_Framework_TestCase
         $actual = $rq->set_foo($arr['foo']);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testMagicCallThrowsOnNonGetOrSetMethodCall()
     {
+        $this->expectException('Exception');
         $rq = $this->getRQ(array(
             'setOptions',
             'getOption',

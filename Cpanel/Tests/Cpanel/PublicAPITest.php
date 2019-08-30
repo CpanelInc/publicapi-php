@@ -1,19 +1,19 @@
 <?php
-require_once 'PHPUnit/Autoload.php';
 /**
  * Basic test case for the Cpanel class
  * @author davidneimeyer
  * @covers Cpanel_PublicAPI
  */
-class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
+class Cpanel_PublicAPITest extends CpanelTestCase
 {
     /**
      * Test that 'new Cpanel()' will throw an exception
-     * @expectedException Exception
+     * @expectException Exception
      * @covers            Cpanel_PublicAPI::__construct
      */
     public function testCanNotInstanciateDirectly()
     {
+        $this->expectException('Exception');
         $cp = new Cpanel_PublicAPI();
     }
     /**
@@ -22,7 +22,7 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
     public function testGetInstanceWithoutParam()
     {
         $cp = Cpanel_PublicAPI::getInstance();
-        $this->assertInternalType('object', $cp);
+        $this->assertIsObject($cp);
         return $cp;
     }
     public static $simpleArray = array(
@@ -84,10 +84,11 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify clone will throw exception
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testCloneThrowsException()
     {
+        $this->expectException('Exception');
         $cp = Cpanel_PublicAPI::getInstance();
         $no = clone $cp;
     }
@@ -107,7 +108,7 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
     {
         Cpanel_PublicAPI::resetInstance();
         $cp = Cpanel_PublicAPI::getInstance(self::$simpleArray);
-        $this->assertInternalType('object', $cp);
+        $this->assertIsObject($cp);
         return $cp;
     }
     /**
@@ -143,7 +144,8 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
         $reveal = (is_array($reveal)) ? $reveal : array();
         $reveal['_canInstantiate'] = true;
         //setup a mock; don't call construct when creating mock
-        $stub = $this->getMockBuilder('Cpanel_PublicAPI')->disableOriginalConstructor()->setMethods($methods)->getMock();
+        
+        $stub = $this->_makeMock('Cpanel_PublicAPI',$methods,array(),'',false);
         foreach ($reveal as $key => $value) {
             $rprop = new ReflectionProperty('Cpanel_PublicAPI', $key);
             $rprop->setAccessible(true);
@@ -159,11 +161,9 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
         Cpanel_PublicAPI::resetInstance();
         $rprop = new ReflectionProperty('Cpanel_PublicAPI', '_registry');
         $rprop->setAccessible(true);
-        //verify that the class defines a 'blank' value
-        $this->assertEmpty($rprop->getValue(new ReflectionClass('Cpanel_PublicAPI')));
         //verify instantiate does the minimum, assigns an object to $_registry
         $cp = Cpanel_PublicAPI::getInstance();
-        $this->assertInternalType('object', $rprop->getValue($cp));
+        $this->assertIsObject($rprop->getValue($cp));
         return $cp;
     }
     /**
@@ -175,7 +175,7 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
         $rmeth = new ReflectionMethod('Cpanel_PublicAPI', 'getRegistry');
         $rmeth->setAccessible(true);
         $obj = $rmeth->invoke($fixture);
-        $this->assertInternalType('object', $obj);
+        $this->assertIsObject($obj);
     }
     /**
      * Verify that registerRegistry is called during instantiation
@@ -244,7 +244,7 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
         Cpanel_PublicAPI::resetInstance();
         $cp = Cpanel_PublicAPI::getInstance();
         $result = $cp->getNamedConfig('myserver1', array());
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEmpty($result);
     }
     /**
@@ -258,7 +258,7 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
         Cpanel_PublicAPI::resetInstance();
         $cp = Cpanel_PublicAPI::getInstance();
         $result = $cp->getNamedConfig('--fake--', $cpObj);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEmpty($result);
     }
     /**
@@ -383,10 +383,11 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
     }
     /**
      * Factory should throw exception when invoked with 'blank' type, arg-0
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testFactoryThrowsExceptionWithArg0()
     {
+        $this->expectException('Exception');
         Cpanel_PublicAPI::resetInstance();
         Cpanel_PublicAPI::factory('', array(), '');
     }
@@ -479,11 +480,12 @@ class Cpanel_PublicAPITest extends PHPUnit_Framework_TestCase
      * invocation
      * 
      * @depends           testFactoryCanReturnWHMFromSimpleConfig
-     * @expectedException Exception
+     * @expectException Exception
      * @outputBuffering   disabled
      */
     public function testCallerThrowExceptionWhenNoArgsOnDispatchedApiRequest()
     {
+        $this->expectException('Exception');
         $arr = array(
             'service' => array(
                 'whm' => array(

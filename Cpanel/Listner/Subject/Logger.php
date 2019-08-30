@@ -2,7 +2,7 @@
 /**
  * Cpanel_Listner_Subject_Logger
  * 
- * Copyright (c) 2011, cPanel, Inc.
+ * Copyright (c) 2011, cPanel, L.L.C.
  * All rights reserved.
  * http://cpanel.net
  *
@@ -13,7 +13,7 @@
  *    * Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in the
  *      documentation and/or other materials provided with the distribution.
- *    * Neither the name of cPanel, Inc. nor the
+ *    * Neither the name of cPanel, L.L.C. nor the
  *      names of its contributors may be used to endorse or promote products
  *      derived from this software without specific prior written permission.
  *
@@ -32,9 +32,9 @@
  * @package    Cpanel_Listner
  * @subpackage Subject
  * @author     David Neimeyer <david.neimeyer@cpanel.net>
- * @copyright  (c) 2011 cPanel, Inc., All rights Reserved. (http://cpanel.net) 
+ * @copyright  (c) 2011 cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
  * @license    http://sdk.cpanel.net/license/bsd.html BSD License 
- * @version    0.1.0
+ * @version    0.2.0
  * @link       http://sdk.cpanel.net
  * @since      0.1.0
  */
@@ -46,9 +46,9 @@
  * @package    Cpanel_Listner
  * @subpackage Subject
  * @author     David Neimeyer <david.neimeyer@cpanel.net>
- * @copyright  (c) 2011 cPanel, Inc., All rights Reserved. (http://cpanel.net) 
+ * @copyright  (c) 2011 cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
  * @license    http://sdk.cpanel.net/license/bsd.html BSD License 
- * @version    0.1.0
+ * @version    0.2.0
  * @link       http://sdk.cpanel.net
  * @since      0.1.0
  */

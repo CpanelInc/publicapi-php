@@ -1,10 +1,13 @@
 <?php
+
+
+
 /**
  * @covers Cpanel_Parser_XML
  * @author davidneimeyer
  *         
  */
-class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
+class Cpanel_Parser_XMLTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Parser_XML
@@ -31,7 +34,7 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     /**
@@ -52,7 +55,7 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object();
     }
@@ -199,11 +202,6 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
         $p->setMode($input);
         $this->assertEquals($p->mode, $mode);
     }
-    public function testPrivateHasParseError()
-    {
-        $p = new $this->cut();
-        $this->assertAttributeEquals(null, '_hasParseError', $p);
-    }
     public function testInterface()
     {
         $p = new $this->cut();
@@ -272,28 +270,6 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
             $this->assertTrue($param->isDefaultValueAvailable());
         }
         $this->assertEquals($expected, $actual);
-    }
-    /**
-     * @depends testPrivateHasParseError
-     */
-    public function testGetParserInternalErrorsReturnBlankByDefault()
-    {
-        $p = $this->getP();
-        $this->assertEmpty($p->getParserInternalErrors());
-    }
-    /**
-     * @depends testGetParserInternalErrorsReturnBlankByDefault
-     */
-    public function testGetParserInternalErrorsReturnMinimumOfPrefix()
-    {
-        $p = new $this->cut();
-        $prefix = 'foo';
-        $rprop = new ReflectionProperty($p, '_hasParseError');
-        $rprop->setAccessible(true);
-        $rprop->setValue($p, true);
-        $r = $p->getParserInternalErrors($prefix);
-        $condition = (strpos($r, $prefix) === 0);
-        $this->assertTrue($condition);
     }
     /**
      * @depends testGetParserInternalErrorsParameters
@@ -457,15 +433,18 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
     {
         $p = new $this->cut();
         if ($expectE) {
-            $this->setExpectedException('Exception');
+            $this->expectException('Exception');
         }
         $p->encodeQueryObject($input);
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testEncodeQueryObjectThrowOnBadEncode()
     {
+        $this->expectException('Exception');
         $p = new $this->cut();
         $data = array(
             'foo' => 'bar',
@@ -544,12 +523,13 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
         );
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      * @dataProvider      badInput
      * @paramsunknown_type $input
      */
     public function testParseThrowOnBadInput($input)
     {
+        $this->expectException('Exception');
         $p = new $this->cut();
         $actual = $p->parse($input);
     }
@@ -682,7 +662,7 @@ class Cpanel_Parser_XMLTest extends PHPUnit_Framework_TestCase
   <apiversion>2</apiversion>
   <data>
     <_diskquota>262144000</_diskquota>
-    <_diskused></_diskused>
+    <_diskused/>
     <diskquota>250</diskquota>
     <txtdiskquota>250</txtdiskquota>
     <user>auththis</user>

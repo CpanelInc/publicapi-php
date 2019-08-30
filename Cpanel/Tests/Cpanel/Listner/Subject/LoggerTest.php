@@ -1,11 +1,14 @@
 <?php
+
+
+
 /**
  * This will include testing for the (concrete) class Cpanel_Listner_Subject_Logger
  * and the (abstract) Cpanel_Abstract_CpanelListner class 
  * @author davidneimeyer
  *         
  */
-class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
+class Cpanel_Listner_Subject_LoggerTest extends CpanelTestCase
 {
     public $cut = 'Cpanel_Listner_Subject_Logger';
     /**
@@ -47,9 +50,9 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     }
     public function getMockSplObserver()
     {
-        $mockObserver = $this->getMockBuilder('SplObserver')->setMethods(array(
+        $mockObserver = $this->_makeMock('SplObserver', array(
             'update'
-        ))->getMock();
+        ));
         return $mockObserver;
     }
     /**
@@ -82,7 +85,7 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     public function testAttachSeeksInternalStorage($fixtureArray)
     {
         list($l, $rprop, $mockObserver) = $fixtureArray;
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'contains'
         ));
         $mock->expects($this->once())->method('contains')->with($this->anything())->will($this->returnValue(true));
@@ -95,7 +98,7 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     public function testAttachWillCallChangePriorityForStoredObservers($fixtureArray)
     {
         list($l, $rprop, $mockObserver) = $fixtureArray;
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'contains',
             'changePriority'
         ));
@@ -116,7 +119,7 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
      */
     public function testDetachSeeksObserverInStorage()
     {
-        $mock = $this->getMock($this->cut, array(
+        $mock = $this->_makeMock($this->cut, array(
             'contains'
         ));
         $mock->expects($this->once())->method('contains')->with($this->anything())->will($this->returnValue(true));
@@ -196,15 +199,17 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
         foreach ($called as $observer) {
             $actual[] = spl_object_hash($observer);
         }
+        $expected = sort($expected);
+        $actual = sort($actual);
         $this->assertEquals($expected, $actual);
     }
     /**
      * Verify that first arg is object instance of SplObserver and exception is
      * thrown without arg2
-     * @expectedException Exception
      */
     public function testChangePriorityRequiresObserverAndPriority()
     {
+        $this->expectException('Exception');
         $rmeth = new ReflectionMethod($this->cut, 'changePriority');
         $rparams = $rmeth->getParameters();
         $actual = $rparams[0]->getClass()->getName();
@@ -215,30 +220,30 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify string are not accepted for priority
-     * @expectedException Exception
      */
     public function testChangePriorityThrowsOnStringForPriority()
     {
+        $this->expectException('Exception');
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
         $l->changePriority($obs, '--fake--');
     }
     /**
      * Verify bool are not accepted for priority
-     * @expectedException Exception
      */
     public function testChangePriorityThrowsOnBoolForPriority()
     {
+        $this->expectException('Exception');
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
         $l->changePriority($obs, true);
     }
     /**
      * Verify objs are not accepted for priority
-     * @expectedException Exception
      */
     public function testChangePriorityThrowsOnObjectForPriority()
     {
+        $this->expectException('Exception');
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
         $obj = new stdClass();
@@ -251,7 +256,8 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     {
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
-        $l->changePriority($obs, 1);
+        // Ensure that this returns it self and doesn't throw an exception
+        $this->assertEquals($l, $l->changePriority($obs, 1));        
     }
     /**
      * Verify numbers in an array are accepted for priority
@@ -260,17 +266,19 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     {
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
-        $l->changePriority($obs, array(
+        $value = array(
             1,
             2
-        ));
+        );
+        // Ensure that this returns it self and doesn't throw an exception
+        $this->assertEquals($l, $l->changePriority($obs, $value));
     }
     /**
      * Verify non-numbers in an array are not accepted for priority
-     * @expectedException Exception
      */
     public function testChangePriorityThrowOnStringInArrayForPriority()
     {
+        $this->expectException('Exception');
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
         $l->changePriority($obs, array(
@@ -280,10 +288,10 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify non-numbers in an array are not accepted for priority
-     * @expectedException Exception
      */
     public function testChangePriorityThrowOnObjInArrayForPriority()
     {
+        $this->expectException('Exception');
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
         $obj = new stdClass();
@@ -294,10 +302,10 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify bool in array are not accepted for priority
-     * @expectedException Exception
      */
     public function testChangePriorityThrowsOnBoolInArrayForPriority()
     {
+        $this->expectException('Exception');
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
         $l->changePriority($obs, array(
@@ -307,10 +315,10 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify null in array are not accepted for priority
-     * @expectedException Exception
      */
     public function testChangePriorityThrowsOnNullInArrayForPriority()
     {
+        $this->expectException('Exception');
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
         $l->changePriority($obs, array(
@@ -320,10 +328,10 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Verify empty array are not accepted for priority
-     * @expectedException Exception
      */
     public function testChangePriorityThrowsOnEmptyArrayForPriority()
     {
+        $this->expectException('Exception');
         $l = new $this->cut();
         $obs = $this->getMockSplObserver();
         $l->changePriority($obs, array());
@@ -381,7 +389,7 @@ class Cpanel_Listner_Subject_LoggerTest extends PHPUnit_Framework_TestCase
     }
     public function testSetDebugLevelSetsProtectedLevelAndCallsNotify()
     {
-        $l = $this->getMock($this->cut, array(
+        $l = $this->_makeMock($this->cut, array(
             'notify'
         ));
         $l->expects($this->once())->method('notify');

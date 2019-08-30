@@ -55,7 +55,7 @@ Code:
 The cPanel PHP library is a foundation for developers to build applications and
 scripts that interact with cPanel systems.
  
-_Version 0.1.0 is compatible with PHP >= 5.2_
+_Version 0.2.0 is compatible with PHP >= 7.3_
  
 The library is divided into components.  The follow list itemizes a few
 of the components, and their description, that are in the library:
@@ -97,7 +97,7 @@ Examples of how to code with the PublicAPI client class can be found:
 document
 * In detail: The examples directory, _Cpanel/Examples/_ within the repository
 
-_Version 0.1.0 is compatible with PHP >= 5.2_
+_Version 0.2.0 is compatible with PHP >= 7.3_
 
 ## Examples Directory
 
@@ -119,10 +119,15 @@ rely on it.
 
 Unit tests for the cPanel PHP library and the PublicAPI client class are
 included in the _Cpanel/Tests/_ directory.  They are written for use with
-[PHPUnit][PHPUnit_mainpage] >= 3.5 These test will require PHP 5.3 or
+[PHPUnit][PHPUnit_mainpage] >= 8 These test will require PHP 7.3 or
 greater, as they use specific Reflection functions that allow for assertions
 to be made on properties and methods whose visibility is _private_ or 
 _protected_.  
+
+Using Composer, you can run the unit tests with the following incantation:
+
+Code:
+    ~/vendor/bin/phpunit --bootstrap ~/vendor/autoload.php --bootstrap phpunit.bootstrap.php Cpanel/Tests
 
 [XML-API_github]: http://github.com/CpanelInc/xmlapi-php "XML-API client class on GitHub"
 [xmlapi_version]: http://docs.cpanel.net/twiki/bin/view/AllDocumentation/AutomationIntegration/DisplaycPanelWHMVersion "XML-API 'version'"

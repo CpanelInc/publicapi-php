@@ -2,7 +2,7 @@
 /**
  * Cpanel_Query_Http_Abstract
  * 
- * Copyright (c) 2011, cPanel, Inc.
+ * Copyright (c) 2011, cPanel, L.L.C.
  * All rights reserved.
  * http://cpanel.net
  *
@@ -13,7 +13,7 @@
  *    * Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in the
  *      documentation and/or other materials provided with the distribution.
- *    * Neither the name of cPanel, Inc. nor the
+ *    * Neither the name of cPanel, L.L.C. nor the
  *      names of its contributors may be used to endorse or promote products
  *      derived from this software without specific prior written permission.
  *
@@ -32,9 +32,9 @@
  * @package    Cpanel_Query
  * @subpackage Http
  * @author     David Neimeyer <david.neimeyer@cpanel.net>
- * @copyright  (c) 2011 cPanel, Inc., All rights Reserved. (http://cpanel.net) 
+ * @copyright  (c) 2011 cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
  * @license    http://sdk.cpanel.net/license/bsd.html BSD License 
- * @version    0.1.0
+ * @version    0.2.0
  * @link       http://sdk.cpanel.net
  * @since      0.1.0
  */
@@ -46,9 +46,9 @@
  * @package    Cpanel_Query
  * @subpackage Http
  * @author     David Neimeyer <david.neimeyer@cpanel.net>
- * @copyright  (c) 2011 cPanel, Inc., All rights Reserved. (http://cpanel.net) 
+ * @copyright  (c) 2011 cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
  * @license    http://sdk.cpanel.net/license/bsd.html BSD License 
- * @version    0.1.0
+ * @version    0.2.0
  * @link       http://sdk.cpanel.net
  * @since      0.1.0
  */
@@ -80,6 +80,10 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
      * Authenticating user
      */
     protected $user = null;
+    /**
+     * Authenticating token
+     */
+    protected $token = null;
     /**
      * PHP remote query function set
      * 'curl'|'fopen'
@@ -351,9 +355,9 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
      */
     public function setAuthType($auth_type)
     {
-        if ($auth_type != 'hash' && $auth_type != 'pass') {
+        if ($auth_type != 'hash' && $auth_type != 'pass' && $auth_type != 'token') {
             throw new Exception(
-                'The only two allowable auth types are "hash" and "pass"'
+                'The only allowable auth types are "hash", "pass", and "token"'
             );
         }
         $this->auth_type = $auth_type;
@@ -374,6 +378,23 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
     {
         $this->setAuthType('pass');
         $this->auth = $pass;
+        return $this;
+    }
+    /**
+     * Accessor to set the authentication token
+     *
+     * The method will invoke {@link setAuthType} with 'token'
+     *
+     * @param string $token The api token to authenticate with
+     * 
+     * @see    setAuthType()
+     * 
+     * @return Cpanel_Query_Http_Abstract
+     */
+    public function setToken($token)
+    {
+        $this->setAuthType('token');
+        $this->auth = $token;
         return $this;
     }
     /**
@@ -608,6 +629,12 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
                   . ':'
                   . $this->auth
                   . "\r\n";
+        } elseif ($this->auth_type == 'token') {
+            return 'Authorization: cpanel '
+                . $this->user
+                . ':'
+                . $this->auth
+                . "\r\n";
         } elseif ($this->auth_type == 'pass') {
             return 'Authorization: Basic '
                  . base64_encode($this->user . ':' . $this->auth)
@@ -1034,7 +1061,9 @@ abstract class Cpanel_Query_Http_Abstract extends Cpanel_Core_Object
             if (count($nameParts) > 1) {
                 array_walk(
                     $nameParts,
-                    create_function('&$v', '$v = ucfirst(strtolower($v));')
+                    function ($v){
+                        $v = ucfirst(strtolower($v));
+                    }
                 );
                 $mname = 'set' . implode('', $nameParts);
             } else {

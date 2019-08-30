@@ -1,4 +1,7 @@
 <?php
+
+
+
 class concreteLocalQuery extends Cpanel_Query_Live_Abstract
 {
     public function getAdapterResponseFormatType()
@@ -15,7 +18,7 @@ class mockException extends Exception
  * Test class for Cpanel_Query_Live_Abstract.
  * @covers Cpanel_Query_Live_Abstract
  */
-class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
+class Cpanel_Query_Live_AbstractTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Query_Live_Abstract
@@ -49,7 +52,7 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     /**
@@ -70,16 +73,16 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object();
     }
     //    public static function setUpBeforeClass()
-    public function setUp()
+    public function setUp(): void
     {
         self::startMSS();
     }
-    public function tearDown()
+    public function tearDown(): void
     {
         self::stopMSS();
     }
@@ -112,7 +115,7 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
             self::fail('Socket file does not exist: ' . $socketfile);
         }
     }
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (!empty(self::$fakeResources)) {
             foreach (self::$fakeResources as $name => $fh) {
@@ -250,10 +253,11 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         $obj->__destruct();
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testConstructThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $lq = $this->getLQ();
         $rmeth = new ReflectionMethod($this->cut, '__construct');
         $rmeth->invoke($lq, new stdClass());
@@ -347,20 +351,22 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($condition);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testPrivateIntJSONModeThrowsIfNotConnected()
     {
+        $this->expectException('Exception');
         $lq = $this->getLQ();
         $rmeth = new ReflectionMethod($lq, '_initJSONMode');
         $rmeth->setAccessible(true);
         $rmeth->invoke($lq);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testOpenCpanelHandleThrowsOnBadSocketfile()
     {
+        $this->expectException('Exception');
         $lq = $this->getLQ();
         putenv('CPANEL_PHPCONNECT_SOCKET=');
         $lq->openCpanelHandle();
@@ -369,19 +375,25 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
      * looks like this test passed due to warn by fsockopen, and not the scripted
      * exception throw
      * @todo              consider reworking or removing; might be untestable
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testOpenCpanelHandleThrowsOnBadfsockopen()
     {
         $lq = $this->getLQ();
-        putenv('CPANEL_PHPCONNECT_SOCKET=/dev/null');
-        $lq->openCpanelHandle();
+        try {
+            putenv('CPANEL_PHPCONNECT_SOCKET=/dev/null');
+            $lq->openCpanelHandle();
+        } catch ( Exception $e ) {
+            $this->assertEquals('fsockopen(): unable to connect to unix:///dev/null:-1 (Socket operation on non-socket)',$e->getMessage());
+        }
+        
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetResponseObjectThrowsOnBadInput()
     {
+        $this->expectException('Exception');
         $lq = $this->getLQ();
         $lq->setResponseObject(new stdClass());
     }
@@ -416,7 +428,7 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         $rprop = new ReflectionProperty($this->real_cut, '_cpanelfh');
         $rprop->setAccessible(true);
         $actual = $rprop->getValue($lq);
-        $this->assertInternalType('resource', $actual);
+        $this->assertIsResource($actual);
         $rmeth = new ReflectionMethod($this->real_cut, '_write');
         $rmeth->setAccessible(true);
         $rmeth->invoke($lq, Cpanel_Tests_MockSocketServer::C_ENABLE_JSON);
@@ -427,10 +439,11 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertNull($actual);
     }
     /**
-     * @expectedException mockException
+     * @expectException mockException
      */
     public function testExecCallsOpenCpanelHandleIfNotConnected()
     {
+        $this->expectException('mockException');
         $lq = $this->getLQ(array(
             'openCpanelHandle'
         ));
@@ -456,12 +469,15 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         $lq = $this->getLQ();
         $lq->setResponseObject($this->getRObj());
         $lq->exec($code, 1);
+        // no assertions, not no exceptions either
+        $this->expectNotToPerformAssertions();
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testExecRequiresResponseObjectBeSet()
     {
+        $this->expectException('Exception');
         $code = Cpanel_Tests_MockSocketServer::C_ENABLE_JSON;
         $lq = $this->getLQ(array(
             'getResponseObject'
@@ -470,10 +486,11 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         $lq->exec($code, 1);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testExecTakesCodeThrowOnBadInput()
     {
+        $this->expectException('Exception');
         $code = Cpanel_Tests_MockSocketServer::C_ENABLE_JSON;
         $lq = $this->getLQ();
         $lq->setResponseObject($this->getRObj());
@@ -482,10 +499,11 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         ), 1);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testExecThrowsOnEmptyComputedCodeString()
     {
+        $this->expectException('Exception');
         $rObj = $this->getRObj(true, array(
             'getResponseFormatType'
         ));
@@ -547,10 +565,11 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($args, $actual);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testMakeQueryOptionalArgsMustBeArray()
     {
+        $this->expectException('Exception');
         $lq = $this->getLQ(array(
             'exec'
         ));
@@ -599,10 +618,11 @@ class Cpanel_Query_Live_AbstractTest extends PHPUnit_Framework_TestCase
         ));
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testMagicCallWillAlwaysThrow()
     {
+        $this->expectException('Exception');
         $lq = $this->getLQ();
         $lq->getBlah();
     }

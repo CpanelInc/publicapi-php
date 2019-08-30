@@ -1,10 +1,13 @@
 <?php
+
+
+
 /**
  * @covers Cpanel_Service_cPanel
  * @author davidneimeyer
  *         
  */
-class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
+class Cpanel_Service_cPanelTest extends CpanelTestCase
 {
     protected $cut = 'Cpanel_Service_cPanel';
     protected $qa = 'Cpanel_Query_Object';
@@ -27,7 +30,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     /**
@@ -48,7 +51,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->qa, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new Cpanel_Query_Object();
     }
@@ -289,7 +292,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
     {
         $opts = $this->getOptsArray();
         $cp = new $this->cut($opts);
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'makeQuery'
         ));
         $mockAdapter->expects($this->once())->method('makeQuery');
@@ -309,7 +312,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
     {
         $opts = $this->getOptsArray();
         $cp = new $this->cut($opts);
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'makeQuery'
         ));
         $mockAdapter->expects($this->once())->method('makeQuery');
@@ -336,7 +339,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
     {
         $opts = $this->getOptsArray();
         $cp = new $this->cut($opts);
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'makeQuery'
         ));
         $mockAdapter->expects($this->once())->method('makeQuery')->will($this->returnArgument(0));
@@ -355,7 +358,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
     {
         $opts = $this->getOptsArray();
         $cp = new $this->cut($opts);
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'makeQuery'
         ));
         $mockAdapter->expects($this->once())->method('makeQuery')->will($this->returnArgument(1));
@@ -375,7 +378,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
             'blah' => 'baz'
         );
         $expected0 = 'functionName';
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'xmlapi_query'
         ));
         $mockAdapter->expects($this->once())->method('xmlapi_query')->will($this->returnArgument(0));
@@ -395,7 +398,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
             'blah' => 'baz'
         );
         $expected0 = 'functionName';
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'xmlapi_query'
         ));
         $mockAdapter->expects($this->once())->method('xmlapi_query')->will($this->returnArgument(1));
@@ -419,7 +422,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
             'two',
             'three'
         );
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'api1_query'
         ));
         $mockAdapter->expects($this->any())->method('api1_query');
@@ -448,7 +451,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
             'two',
             'three'
         );
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'api1_query'
         ));
         $mockAdapter->expects($this->any())->method('api1_query');
@@ -485,7 +488,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
         );
         $userInfo = posix_getpwuid(posix_geteuid());
         $account = (array_key_exists('user', $opts)) ? $opts['user'] : $userInfo['name'];
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'api1_query'
         ));
         $mockAdapter->expects($this->once())->method('api1_query')->with($account, $mf['module'], $mf['function'], $args);
@@ -516,7 +519,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
         );
         $this->setLocalEnviro();
         $adapterName = 'Cpanel_Service_Adapter_Liveapi';
-        $mockAdapter = $this->getMock($adapterName, array(
+        $mockAdapter = $this->_makeMock($adapterName, array(
             'openCpanelHandle',
             'makeQuery'
         ));
@@ -552,7 +555,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
         );
         $this->setLocalEnviro();
         $adapterName = 'Cpanel_Service_Adapter_Liveapi';
-        $mockAdapter = $this->getMock($adapterName, array(
+        $mockAdapter = $this->_makeMock($adapterName, array(
             'openCpanelHandle',
             'makeQuery'
         ));
@@ -586,7 +589,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
             'two' => 'two',
             'three' => 'three'
         );
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'api2_query'
         ));
         $mockAdapter->expects($this->any())->method('api2_query');
@@ -615,7 +618,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
             'two' => 'two',
             'three' => 'three'
         );
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'api2_query'
         ));
         $mockAdapter->expects($this->any())->method('api2_query');
@@ -652,7 +655,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
         );
         $userInfo = posix_getpwuid(posix_geteuid());
         $account = (array_key_exists('user', $opts)) ? $opts['user'] : $userInfo['name'];
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_Cpanelapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_Cpanelapi', array(
             'api2_query'
         ));
         $mockAdapter->expects($this->once())->method('api2_query')->with($account, $mf['module'], $mf['function'], $args);
@@ -683,7 +686,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
         );
         $this->setLocalEnviro();
         $adapterName = 'Cpanel_Service_Adapter_Liveapi';
-        $mockAdapter = $this->getMock($adapterName, array(
+        $mockAdapter = $this->_makeMock($adapterName, array(
             'openCpanelHandle',
             'makeQuery'
         ));
@@ -719,7 +722,7 @@ class Cpanel_Service_cPanelTest extends PHPUnit_Framework_TestCase
         );
         $this->setLocalEnviro();
         $adapterName = 'Cpanel_Service_Adapter_Liveapi';
-        $mockAdapter = $this->getMock($adapterName, array(
+        $mockAdapter = $this->_makeMock($adapterName, array(
             'openCpanelHandle',
             'makeQuery'
         ));

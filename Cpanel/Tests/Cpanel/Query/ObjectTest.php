@@ -1,4 +1,7 @@
 <?php
+
+
+
 class customParser extends Cpanel_Core_Object implements Cpanel_Parser_Interface
 {
     public function canParse($type)
@@ -14,7 +17,7 @@ class customParser extends Cpanel_Core_Object implements Cpanel_Parser_Interface
     {
     }
 }
-class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
+class Cpanel_Query_ObjectTest extends CpanelTestCase
 {
     /**
      * @var Cpanel_Query_Live_Abstract
@@ -43,7 +46,7 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     public function getParser($mock = false, $methods = array(), $args = array(), $mockName = '', $callConst = true, $callClone = true, $callA = true)
@@ -52,7 +55,7 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
             if (empty($methods)) {
                 $methods = null;
             }
-            return $this->getMock($this->p, $methods, $args, $mockName, $callConst, $callClone, $callA);
+            return $this->_makeMock($this->p, $methods, $args, $mockName, $callConst, $callClone, $callA);
         }
         return new $this->p();
     }
@@ -160,10 +163,20 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
             $this->assertTrue($prop->isPrivate());
             break;
         }
+
+        $reflector = new ReflectionObject($rObj);
+        $attribute = $reflector->getProperty($name);
+        $attribute->setAccessible(true);
+        $value = $attribute->getValue($rObj);
+        $attribute->setAccessible(false);
+
         if (is_object($defaultValue)) {
-            $this->assertAttributeInstanceOf(get_class($defaultValue), $name, $rObj);
+            $class = get_class($defaultValue);
+            $this->assertInstanceOf(get_class($defaultValue), $value);
         } elseif ($defaultValue !== '') {
-            $this->assertAttributeEquals($defaultValue, $name, $rObj);
+            $this->assertEquals($defaultValue, $value);
+        }else{
+            $this->assertEquals($defaultValue, $value);
         }
     }
     public function testSetResponseFormatTypeStoresFT()
@@ -204,10 +217,11 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
         $rObj->setResponseFormatType('foo');
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetResponseFormatTypeThrowForPreviouslyStoredParserCanNotParse()
     {
+        $this->expectException('Exception');
         $rObj = $this->getRObj(array(
             'setResponseParser',
             'getValidParser'
@@ -224,10 +238,11 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
         $rObj->setResponseFormatType('foo');
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetResponseFormatTypeThrowsOnBadInterface()
     {
+        $this->expectException('Exception');
         $rObj = $this->getRObj(array(
             'setResponseParser',
             'getValidParser'
@@ -294,10 +309,11 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(get_class($p), $actual);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testGetValidParserThrowOnBadCustomParser()
     {
+        $this->expectException('Exception');
         $rObj = new $this->cut();
         $p = 'fooBarBaz';
         //need to suppress warnings as the Zend autoload with call include_once()
@@ -308,10 +324,11 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
         $actual = @$rObj->getValidParser($p);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testGetValidParserThrowOnCustomParserWhichDoesNotImplementParserInterface()
     {
+        $this->expectException('Exception');
         $rObj = new $this->cut();
         $p = 'stdClass';
         //need to suppress warnings as the Zend autoload with call include_once()
@@ -363,10 +380,11 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($p, $rprop->getValue($rObj));
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetResponseParserEnforcesPrivatePinterfaceFailTest()
     {
+        $this->expectException('Exception');
         $rObj = new $this->cut();
         $p = new stdClass();
         $rprop = new ReflectionProperty($this->cut, '_pinterface');
@@ -459,7 +477,7 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
     {
         $rObj = new $this->cut();
         $arg = $this->getParsedDataArray();
-        $container = $this->getMock('Cpanel_Core_Object', array(
+        $container = $this->_makeMock('Cpanel_Core_Object', array(
             'setOptions'
         ));
         $container->expects($this->once())->method('setOptions')->with($arg);
@@ -629,7 +647,7 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
     {
         $rObj = new $this->cut();
         $arg = $this->getParsedDataArray();
-        $container = $this->getMock('Cpanel_Core_Object', array(
+        $container = $this->_makeMock('Cpanel_Core_Object', array(
             'setOptions'
         ));
         $container->expects($this->once())->method('setOptions')->with($arg);
@@ -670,7 +688,7 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
     {
         $foo = 'raw response string';
         $expected = "Storing RawResponse:\n$foo";
-        $l = $this->getMock('Cpanel_Listner_Subject_Logger', array(
+        $l = $this->_makeMock('Cpanel_Listner_Subject_Logger', array(
             'log'
         ));
         $l->expects($this->once())->method('log')->with('debug', $expected)->will($this->returnValue($this->anything()));
@@ -703,7 +721,7 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->getParsedDataArray(), $actual);
     }
     /**
-     * @expectedException Exception
+     * @expectException Exception
      * @depends           testSetRawResponseDoesSomething
      * @depends           testSetResponseErrorStoresStringInPrivateResponseErrors
      * @depends           testSetResponseUsesUnderlyingSetOptionsOnPrivateResponse
@@ -714,6 +732,7 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
      */
     public function testProtectedParseThrowsOnParserNotImplementingPrivatePinterface()
     {
+        $this->expectException('Exception');
         $raw = $this->getRawJsonData();
         $rObj = new $this->cut();
         $rObj->setRawResponse($raw);
@@ -752,7 +771,7 @@ class Cpanel_Query_ObjectTest extends PHPUnit_Framework_TestCase
         $expected = array();
         $this->assertEquals($expected, $actual);
         $errstr = implode(',', $rObj->getResponseErrors());
-        $this->assertContains($rObj::ERROR_RESPONSE, $errstr);
+        $this->assertStringContainsString($rObj::ERROR_RESPONSE, $errstr);
     }
     /**
      * @depends testParseUnderNormalConditions

@@ -1,10 +1,13 @@
 <?php
+
+
+
 /**
  * @covers Cpanel_Service_WHM
  * @author davidneimeyer
  *         
  */
-class Cpanel_Service_WHMTest extends PHPUnit_Framework_TestCase
+class Cpanel_Service_WHMTest extends CpanelTestCase
 {
     protected $cut = 'Cpanel_Service_WHM';
     protected $qa = 'Cpanel_Query_Object';
@@ -27,7 +30,7 @@ class Cpanel_Service_WHMTest extends PHPUnit_Framework_TestCase
         if (empty($methods)) {
             $methods = null;
         }
-        $m = $this->getMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
+        $m = $this->_makeMock($this->cut, $methods, $args, $mockName, $callConst, $callClone, $callA);
         return $m;
     }
     public function getOptsArray()
@@ -229,7 +232,7 @@ class Cpanel_Service_WHMTest extends PHPUnit_Framework_TestCase
     {
         $opts = $this->getOptsArray();
         $whm = new $this->cut($opts);
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_WHMapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_WHMapi', array(
             'makeQuery'
         ));
         $mockAdapter->expects($this->once())->method('makeQuery');
@@ -249,7 +252,7 @@ class Cpanel_Service_WHMTest extends PHPUnit_Framework_TestCase
     {
         $opts = $this->getOptsArray();
         $whm = new $this->cut($opts);
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_WHMapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_WHMapi', array(
             'makeQuery'
         ));
         $mockAdapter->expects($this->once())->method('makeQuery');
@@ -276,7 +279,7 @@ class Cpanel_Service_WHMTest extends PHPUnit_Framework_TestCase
     {
         $opts = $this->getOptsArray();
         $whm = new $this->cut($opts);
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_WHMapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_WHMapi', array(
             'makeQuery'
         ));
         $mockAdapter->expects($this->once())->method('makeQuery')->will($this->returnArgument(0));
@@ -295,7 +298,7 @@ class Cpanel_Service_WHMTest extends PHPUnit_Framework_TestCase
     {
         $opts = $this->getOptsArray();
         $whm = new $this->cut($opts);
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_WHMapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_WHMapi', array(
             'makeQuery'
         ));
         $mockAdapter->expects($this->once())->method('makeQuery')->will($this->returnArgument(1));
@@ -315,7 +318,7 @@ class Cpanel_Service_WHMTest extends PHPUnit_Framework_TestCase
             'blah' => 'baz'
         );
         $expected0 = 'functionName';
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_WHMapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_WHMapi', array(
             'xmlapi_query'
         ));
         $mockAdapter->expects($this->once())->method('xmlapi_query')->will($this->returnArgument(0));
@@ -335,7 +338,7 @@ class Cpanel_Service_WHMTest extends PHPUnit_Framework_TestCase
             'blah' => 'baz'
         );
         $expected0 = 'functionName';
-        $mockAdapter = $this->getMock('Cpanel_Service_Adapter_WHMapi', array(
+        $mockAdapter = $this->_makeMock('Cpanel_Service_Adapter_WHMapi', array(
             'xmlapi_query'
         ));
         $mockAdapter->expects($this->once())->method('xmlapi_query')->will($this->returnArgument(1));

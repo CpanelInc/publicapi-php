@@ -1,11 +1,10 @@
 <?php
-require_once 'PHPUnit/Autoload.php';
 /**
  * Basic test case for the Cpanel_Core_Object class
  * @author davidneimeyer
  * @covers Cpanel_Core_Object
  */
-class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
+class Cpanel_Core_ObjectTest extends CpanelTestCase
 {
     /**
      * Basic instantiation
@@ -87,8 +86,8 @@ class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
     {
         $values = self::$simpleArray;
         $fixture->setOptions($values);
-        foreach ($values as $value) {
-            $this->assertAttributeContains($value, 'dataContainer', $fixture);
+        foreach ($values as $key => $value) {
+            $this->assertEquals($fixture->getOption($key), $value);
         }
         return $fixture;
     }
@@ -103,31 +102,35 @@ class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
         $values = self::$simpleArray;
         $localFixture = new Cpanel_Core_Object();
         $localFixture->setOptions($values);
-        $callBack = create_function('&$item1, $key', '$item1 .= $item1;');
+        $callBack = function (&$item1, $key) {
+            return $item1 .= $item1;
+        };
         array_walk($values, $callBack);
         $localFixture->setOptions($values, false);
-        foreach ($values as $value) {
-            $this->assertAttributeNotContains($value, 'dataContainer', $localFixture);
+        foreach ($values as $key => $value) {
+            $this->assertNotEquals($localFixture->getOption($key), $value);
         }
         return $localFixture;
     }
     /**
      * Verify setOptions will throw exception if passed non-traversable
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetOptionsThrowsExceptionOnNonTraversableArg()
     {
+        $this->expectException("Exception");
         $localFixture = new Cpanel_Core_Object();
         $localFixture->setOptions('string');
     }
     /**
      * Verify setOptions will throw exception if $dataContainer is NULL, aka 
      * Cpanel_Core_Object (or classes that inherit it) aren't constructed properly
-     * @expectedException Exception
+     * @expectException Exception
      */
     public function testSetOptionsThrowsExceptionIfInternalPropertyIsNull()
     {
-        $stub = $this->getMock('Cpanel_Core_Object', array(
+        $this->expectException("Exception");
+        $stub = $this->_makeMock('Cpanel_Core_Object', array(
             '__set'
         ));
         $rprop = new ReflectionProperty('Cpanel_Core_Object', 'dataContainer');
@@ -141,7 +144,7 @@ class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
     public function testSetOptionReturnSelfWhenPassedEmptyTraversable()
     {
         $data = self::$simpleArray;
-        $mockArrayObject = $this->getMock('ArrayObject', array(
+        $mockArrayObject = $this->_makeMock('ArrayObject', array(
             'count'
         ), array(
             $data
@@ -274,7 +277,7 @@ class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
             'c' => 3
         );
         $cpObj = new Cpanel_Core_Object($arr2);
-        $cpObj->setOptions(new Cpanel_Core_Object($arr1), false);
+        $cpObj->setOptions($arr1, false);
         $this->assertEquals($expected, $cpObj->getAllDataRecursively());
     }
     /**
@@ -282,7 +285,7 @@ class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
      */
     public function testMagicGetter()
     {
-        $stub = $this->getMock('Cpanel_Core_Object', array(
+        $stub = $this->_makeMock('Cpanel_Core_Object', array(
             '__get'
         ));
         $stub->expects($this->once())->method('__get')->with('foo')->will($this->returnValue('success'));
@@ -293,7 +296,7 @@ class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
      */
     public function testMagicGetterUsesGetOption()
     {
-        $stub = $this->getMock('Cpanel_Core_Object', array(
+        $stub = $this->_makeMock('Cpanel_Core_Object', array(
             'getOption'
         ));
         $stub->expects($this->once())->method('getOption')->with('foo')->will($this->returnValue('success'));
@@ -304,7 +307,7 @@ class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
      */
     public function testMagicSetter()
     {
-        $stub = $this->getMock('Cpanel_Core_Object', array(
+        $stub = $this->_makeMock('Cpanel_Core_Object', array(
             '__set'
         ));
         $stub->expects($this->once())->method('__set')->with('foo', 'bar');
@@ -316,7 +319,7 @@ class Cpanel_Core_ObjectTest extends PHPUnit_Framework_TestCase
      */
     public function testMagicSetterUsesSetOptions()
     {
-        $stub = $this->getMock('Cpanel_Core_Object', array(
+        $stub = $this->_makeMock('Cpanel_Core_Object', array(
             'setOptions'
         ));
         $stub->expects($this->once())->method('setOptions')->with(array(

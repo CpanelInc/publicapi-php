@@ -1,8 +1,8 @@
 <?php
 /**
- * Example usage of WHM Service
+ * Example usage of cPanel Service with an API Token
  * 
- * Copyright (c) 2011, cPanel, L.L.C.
+ * Copyright (c) 2019, cPanel, L.L.C.
  * All rights reserved.
  * http://cpanel.net
  *
@@ -30,12 +30,12 @@
  * 
  * @category  Cpanel
  * @package   Cpanel_PublicAPI
- * @author    David Neimeyer <david.neimeyer@cpanel.net>
- * @copyright Copyright (c) 2011, cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
+ * @author    Dustin Scherer <dustin.scherer@cpanel.net>
+ * @copyright Copyright (c) 2019, cPanel, L.L.C., All rights Reserved. (http://cpanel.net) 
  * @license   http://sdk.cpanel.net/license/bsd.html BSD License 
  * @version   0.2.0
  * @link      http://sdk.cpanel.net
- * @since     0.1.0
+ * @since     0.2.0
  */
 
 /**
@@ -43,60 +43,45 @@
  */
 TRY {
     require_once realpath( dirname(__FILE__) . '/../Util/Autoload.php');
+
+    # Replace these values with real values from your server
+    # You can generate a cPanel API Token in the Cpanel > API Tokens Interface
+    $HOST_NAME = '10.1.32.118';
+    $HOST_USER = 'green';
+    $TOKEN = '33JK2FL611YNDACZX1EO4M1N7O37HHPE';
     
     /**
-     * PublicAPI style
-     */
-    $cpCfg = array(
-        'cpanel'=>array(
-            'service'=>array(
-                'whm' => array(
-                    'host' => '10.1.4.191',
-                    'user' => 'root',
-                    'password' => 'rootsecret',
-                )
-            )
-        )
+     * Getting a cPanel Service object and invoking the api2_request method on
+     * the cPanel Service object itself.  The preferred method is to use the
+     * cpanel_api{n}_request() method available in the PublicAPI interface, but
+     * this is here for demonstration purposes of the Service available in the
+     * cPanel library.
+     * 
+     * We use the cPanel Service's accessor methods to set initialization
+     * variables.  Authenticating as the user with a token
+     */    
+    $cpanel = Cpanel_PublicAPI::factory('cPanel');
+    $cpanel->setUser($HOST_USER)
+           ->setToken($TOKEN)
+           ->setHost($HOST_NAME);
+           
+    $service = 'cpanel';
+    $queryMF = array(
+        'module' => 'Email',
+        'function' => 'listforwards',
+        'user' => $HOST_USER,
     );
+    $response = $cpanel->api2_request($service, $queryMF);
     
-    $cp = Cpanel_PublicAPI::getInstance($cpCfg);
-    $response = $cp->whm_api('version');
-    echo "WHM Version: {$response->version}\n";
-    
-    /**
-     * One alternative style
-     */
-    $cp = Cpanel_PublicAPI::getInstance();
-    $whm = $cp->factory('WHM');
-    $whm->setUser('root')
-        ->setPassword('rootsecret')
-        ->setHost('10.1.4.191');
-    $response = $whm->xmlapi_query('version');
-    echo "WHM Version: {$response->version}\n";
-    
-    /**
-     * Another alternative is to pass the config to factory() method
-     */
-    $config = array(
-        'host' => '10.1.4.191',
-        'user' => 'root',
-        'password' => 'rootsecret',
-    );
-    $whm = $cp->factory('WHM');
-    $response = $whm->xmlapi_query('version');
-    echo "WHM Version: {$response->version}\n";
-    
-    /**
-     * Using direct library
-     */
-    $config = array(
-        'host' => '10.1.4.191',
-        'user' => 'root',
-        'password' => 'rootsecret',
-    );
-    $whm = new Cpanel_Service_WHM($config);
-    $response = $whm->xmlapi_query('version');
-    echo "WHM Version: {$response->version}\n";
+    echo "API2 response for {$queryMF['module']}::{$queryMF['function']} '\n";
+
+    foreach ($response->cpanelresult->data as $dataset) {
+        foreach ($dataset as $key => $value) {
+            echo "\t$key: $value\n";
+        }
+    }
+
+    echo "\n";
 }
 CATCH(Exception $e) {
     echo $e->getMessage() . "\n" . $e->getTraceAsString() . "\n";
