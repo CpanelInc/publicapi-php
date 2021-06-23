@@ -21,6 +21,7 @@ This quick start example illustrates:
 1. Getting the version string from the response object
 
 Code:
+
     <?php
     
         // Include the autoloader
